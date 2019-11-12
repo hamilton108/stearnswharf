@@ -1,0 +1,79 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 823356046c186e48452715ad5555494afb56937430720b2f53e2fe4807ec9c0d
+
+name:           stearnswharf
+version:        0.9
+description:    Please see the README on GitHub at <https://github.com/githubuser/demo3#readme>
+homepage:       https://github.com/githubuser/demo3#readme
+bug-reports:    https://github.com/githubuser/demo3/issues
+author:         Rolf C Stadheim
+maintainer:     rolf.c.stadheim@gmail.com
+copyright:      2019 Rolf C Stadheim
+license:        BSD3
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/demo3
+
+library
+  exposed-modules:
+      Stearnswharf.Params
+  other-modules:
+      Paths_stearnswharf
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , hmatrix
+    , hspec
+    , mtl
+    , optparse-applicative
+    , utf8-string
+    , yaml
+  default-language: Haskell2010
+
+executable stearnswharf-0.9
+  main-is: Main.hs
+  other-modules:
+      Paths_stearnswharf
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , hmatrix
+    , hspec
+    , mtl
+    , optparse-applicative
+    , stearnswharf
+    , utf8-string
+    , yaml
+  default-language: Haskell2010
+
+test-suite stearnswharf-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_stearnswharf
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , hmatrix
+    , hspec
+    , mtl
+    , optparse-applicative
+    , stearnswharf
+    , utf8-string
+    , yaml
+  default-language: Haskell2010
