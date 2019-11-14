@@ -1,0 +1,11 @@
+---
+nodes:
+  - n1: 0.0
+  - n2
+  - n3
+loads:
+  - l1
+  - l2
+elements:
+  - e1
+  - e2

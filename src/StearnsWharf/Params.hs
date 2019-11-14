@@ -1,4 +1,4 @@
-module Stearnswharf.Params where
+module StearnsWharf.Params where
 
 import Data.Semigroup ((<>))
 import Options.Applicative (Parser,info,helper,showDefault,fullDesc,progDesc,(<**>))

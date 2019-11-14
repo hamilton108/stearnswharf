@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 823356046c186e48452715ad5555494afb56937430720b2f53e2fe4807ec9c0d
+-- hash: 35ce614c0aebe65a00db026b4ea9909e0a188b9a0251fa5d848677295c135316
 
 name:           stearnswharf
 version:        0.9
@@ -23,7 +23,8 @@ source-repository head
 
 library
   exposed-modules:
-      Stearnswharf.Params
+      StearnsWharf.Params
+      StearnsWharf.Yaml.YamlLoad
   other-modules:
       Paths_stearnswharf
   hs-source-dirs:
@@ -62,6 +63,7 @@ test-suite stearnswharf-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      StearnsWharf.Yaml.YamlLoadSpec
       Paths_stearnswharf
   hs-source-dirs:
       test
