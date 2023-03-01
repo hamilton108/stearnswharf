@@ -1,5 +1,5 @@
 name:                stearnswharf 
-version:             0.9
+version:             0.9.1
 github:              "githubuser/demo3"
 license:             BSD3
 author:              "Rolf C Stadheim"
@@ -21,32 +21,42 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- cmdargs 
 - containers
-- mtl
-- utf8-string
-- optparse-applicative 
-- hspec
-- yaml
 - hmatrix
+- HUnit
+- mtl
+- optparse-applicative
+- postgresql-simple
+- utf8-string
+- xml
 
 library:
   source-dirs: src
 
 executables:
-  stearnswharf-0.9:
+  stearnswharf-0.9.1:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wall
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wcompat
+    - -Widentities
+    - -Wpartial-fields
+    - -Wredundant-constraints
+
     dependencies:
-    - stearnswharf
+    - stearnswharf 
 
 tests:
   stearnswharf-test:
-    main:                Spec.hs
-    source-dirs:         test
+    main:                testStearnsWharf.hs
+    source-dirs:         t
     ghc-options:
     - -threaded
     - -rtsopts
