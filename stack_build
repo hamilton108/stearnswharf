@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# stack build --allow-different-user --system-ghc
+
+# DIST_PATH=".stack-work/dist/x86_64-linux-tinfo6/Cabal-3.0.1.0/build"
+
+DIST_PATH=".stack-work/install/x86_64-linux-tinfo6/1d8798d62814362c8eb5f52ac4eff735f4edb4dce0c15285ff9f99f0302387a2/9.2.5/bin"
+
+STEARNS_WHARF_VER="0.9.1"
+
+#FILE="src/Demo.hs.x"
+
+DOCKER=0
+DO_BUILD=0
+
+usage()
+{
+cat << EOF
+usage: $0 options
+
+OPTIONS:
+   -h      Show this message
+   -b      Build bin file 
+   -d      Copy bin file to docker 
+   -v      bin file version (e.g. 1.5.0)
+EOF
+}
+while getopts “hbdv:” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         b)
+             DO_BUILD=1
+             ;;
+         d)
+             DOCKER=1
+             ;;
+         v)
+             ETRADEJANITOR_VER=$OPTARG
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+#if [ ! -f "$FILE" ]; then
+#    mv src/Demo.hs src/Demo.hs.x
+#    hpack
+#fi
+
+if [[ $DO_BUILD -eq 1 ]]; then
+    stack build --allow-different-user 
+fi
+
+if [[ $DOCKER -eq 1 ]]; then
+    SRC="$DIST_PATH/stearnswharf-$STEARNS_WHARF_VER"
+    cp $SRC docker/
+fi
+
+
+exit 0

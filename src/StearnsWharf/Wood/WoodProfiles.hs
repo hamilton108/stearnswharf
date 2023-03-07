@@ -6,12 +6,12 @@ import qualified StearnsWharf.Profiles as P
 import qualified StearnsWharf.Materials as M
 
 data WoodProfile = 
-        WoodProfile {
-            width :: Double,
-            height :: Double,
-            matr :: M.Material
-        }
-        deriving Show
+  WoodProfile 
+  { width :: Double
+  , height :: Double
+  , matr :: M.Material
+  }
+  deriving Show
 
 newWoodProfile :: String     -- ^ Strength Class 
            -> Double  -- ^ Width
