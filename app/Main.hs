@@ -2,6 +2,11 @@
 
 -- #define RCS_DEMO
 
+main :: IO ()
+main = do
+  putStrLn "hi" 
+  
+{-
 import System.Environment (getArgs)
 import qualified Text.XML.Light as X 
 import qualified StearnsWharf.System as S
@@ -38,3 +43,4 @@ demo = do
     Nothing -> error "Failed to parse xml"
     Just doc -> pure doc
 #endif
+-}

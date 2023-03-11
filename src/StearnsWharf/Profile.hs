@@ -1,12 +1,5 @@
-{-# LANGUAGE CPP,NamedFieldPuns, RecordWildCards  #-}
-module StearnsWharf.Profiles where
+module StearnsWharf.Profile where 
 
--- #define RCS_DEBUG
-#ifdef RCS_DEBUG
-import Control.Monad.Writer (Writer,runWriter,tell)
-#endif
-
---import qualified Matstat.Common as C
 import StearnsWharf.Common (StaticMoment,Shear)
 
 class Profile a where 
@@ -24,13 +17,9 @@ class Profile a where
     sectionModulus     :: a -> Double                     -- ^ Statisk moment, W [m3]
     sectionModulusMM   :: a -> Double                     -- ^ Statisk moment, W [mm3]
     sectionModulusMM x = 1000.0**3 * (sectionModulus x)   -- ^ Default implementation sectionModulusMM 
-#ifdef RCS_DEBUG
-    centroid           :: a -> Writer String Double       -- ^ Profilet centroid [m]
-#else
     centroid           :: a -> Double                     -- ^ Profilet centroid [m]
     centroidMM         :: a -> Double                     -- ^ Profilet centroid [mm]
     centroidMM x = (centroid x) * 1000
-#endif
     -- | Nedbøyning fra jevnt fordelt last [a -> kN -> m -> mm]
     deflection         :: a  
                           -> Double -- ^ Jevnt fordelt last q [kN/m]  
@@ -41,6 +30,4 @@ class Profile a where
               l' = l * 1000.0
               ii = secondAreaMomentMM x
          
-        
-
 

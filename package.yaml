@@ -1,5 +1,5 @@
 name:                stearnswharf 
-version:             0.9.1
+version:             2.0.0
 github:              "githubuser/demo3"
 license:             BSD3
 author:              "Rolf C Stadheim"
@@ -25,6 +25,7 @@ dependencies:
 - containers
 - hmatrix
 - HUnit
+- hspec
 - mtl
 - optparse-applicative
 - postgresql-simple
@@ -35,7 +36,7 @@ library:
   source-dirs: src
 
 executables:
-  stearnswharf-0.9.1:
+  stearnswharf-2.0.0:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -55,7 +56,7 @@ executables:
 
 tests:
   stearnswharf-test:
-    main:                testStearnsWharf.hs
+    main:                Spec.hs
     source-dirs:         t
     ghc-options:
     - -threaded

@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 56ffbdc15b858ea61db762b2910184dd4aff025275c058861ef476753761b331
+-- hash: 745b1ba0d9c2337d0f31426fb4f8c55add2c9cef1490e0860ea0bf040491e416
 
 name:           stearnswharf
-version:        0.9.1
+version:        2.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/demo3#readme>
 homepage:       https://github.com/githubuser/demo3#readme
 bug-reports:    https://github.com/githubuser/demo3/issues
@@ -23,25 +23,13 @@ source-repository head
 
 library
   exposed-modules:
-      StearnsWharf.Beams
+      StearnsWharf.Beam
       StearnsWharf.Common
-      StearnsWharf.Loads
-      StearnsWharf.Materials
-      StearnsWharf.Nodes
-      StearnsWharf.Output
-      StearnsWharf.Params
-      StearnsWharf.Profiles
-      StearnsWharf.Steel.HatProfiles
-      StearnsWharf.Steel.HUP
-      StearnsWharf.Steel.Plates
-      StearnsWharf.Steel.SteelProfiles
+      StearnsWharf.Load
+      StearnsWharf.Node
+      StearnsWharf.Profile
       StearnsWharf.System
-      StearnsWharf.Wood.WoodProfiles
-      StearnsWharf.XML.Common
-      StearnsWharf.XML.XmlLoads
-      StearnsWharf.XML.XmlNodes
-      StearnsWharf.XML.XmlProfiles
-      StearnsWharf.Yaml.YamlLoad
+      StearnsWharf.WoodProfile
   other-modules:
       Paths_stearnswharf
   hs-source-dirs:
@@ -52,6 +40,7 @@ library
     , cmdargs
     , containers
     , hmatrix
+    , hspec
     , mtl
     , optparse-applicative
     , postgresql-simple
@@ -59,7 +48,7 @@ library
     , xml
   default-language: Haskell2010
 
-executable stearnswharf-0.9.1
+executable stearnswharf-2.0.0
   main-is: Main.hs
   other-modules:
       Paths_stearnswharf
@@ -72,6 +61,7 @@ executable stearnswharf-0.9.1
     , cmdargs
     , containers
     , hmatrix
+    , hspec
     , mtl
     , optparse-applicative
     , postgresql-simple
@@ -82,14 +72,9 @@ executable stearnswharf-0.9.1
 
 test-suite stearnswharf-test
   type: exitcode-stdio-1.0
-  main-is: testStearnsWharf.hs
+  main-is: Spec.hs
   other-modules:
-      TestComboLoads
-      TestDistLoads
-      TestLoads
-      TestNodes
-      TestPointLoads
-      TestUtil
+      StearnsWharf.NodeSpec
       Paths_stearnswharf
   hs-source-dirs:
       t
@@ -100,6 +85,7 @@ test-suite stearnswharf-test
     , cmdargs
     , containers
     , hmatrix
+    , hspec
     , mtl
     , optparse-applicative
     , postgresql-simple
