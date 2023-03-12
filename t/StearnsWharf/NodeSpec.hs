@@ -36,7 +36,7 @@ n3 =
   , nx = 10.0
   , ny = 0.0
   , dof = Dof 0 0 1
-  , globNdx = 2
+  , globNdx = 4
   } 
 
 n4 :: Node
@@ -46,7 +46,7 @@ n4 =
   , nx = 15.0
   , ny = 0.0
   , dof = Dof 0 0 1
-  , globNdx = 3
+  , globNdx = 5
   } 
 
 n5 :: Node
@@ -56,11 +56,14 @@ n5 =
   , nx = 20.0
   , ny = 0.0
   , dof = Dof 0 0 1
-  , globNdx = 4
+  , globNdx = 6
   } 
 
-testdof :: Dof
-testdof = Dof 0 0 1
+dof4 :: Dof
+dof4 = Dof 0 0 1
+
+dof6 :: Dof
+dof6 = Dof 0 1 1
 
 spec :: Spec
 spec = do
@@ -82,8 +85,11 @@ spec = do
         shouldBe 3 (numDof d7)
         shouldBe 7 (bitSum d7)
     context "Node" $ do
-      it "indexSeed for (Dof 0 0 1), FirstNode, and globalIndex = 0" $ do
-        shouldBe [] (indexSeed testdof FirstNode 0)
+      it "indexSeed" $ do
+        --shouldBe [] (indexSeed dof4 FirstNode 0)
+        --shouldBe [] (indexSeed dof4 SecondNode 0)
+        --shouldBe [] (indexSeed dof6 FirstNode 10)
+        shouldBe [] (indexSeed dof6 SecondNode 10)
 
 
         

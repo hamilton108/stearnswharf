@@ -86,8 +86,7 @@ bitSum (Dof d1 d2 d3) = d1 + 2*d2 + 4*d3
 indexSeed :: Dof -> NodeType -> GlobalIndex -> [IndexPair]
 indexSeed d nodeType globalIndex = 
   let 
-    startIndex | nodeType == FirstNode = 0
-                | otherwise = 3                  
+    startIndex = if nodeType == FirstNode then 0 else 3
     globalIndexY = globalIndex + (dofX d)
     globalIndexM = globalIndexY + (dofY d)
     xp = (startIndex,globalIndex)
