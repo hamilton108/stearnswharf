@@ -89,7 +89,7 @@ spec = do
         --shouldBe [] (indexSeed dof4 FirstNode 0)
         --shouldBe [] (indexSeed dof4 SecondNode 0)
         --shouldBe [] (indexSeed dof6 FirstNode 10)
-        shouldBe [] (indexSeed dof6 SecondNode 10)
+        shouldBe [] (indexSeed dof6 True 10)
 
 
         

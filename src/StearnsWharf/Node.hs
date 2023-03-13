@@ -16,7 +16,11 @@ type GlobalIndex = Index
 
 type IndexPair = (LocalIndex,GlobalIndex)
 
-data NodeType = FirstNode | SecondNode deriving Eq
+-- data NodeType = IsFirstNode | IsSecondNode deriving Eq
+
+newtype FirstNode = FirstNode Node 
+
+newtype SecondNode = SecondNode Node 
 
 data MatrixCoord = MatrixCoord { row, col :: Index } deriving Show
 
@@ -83,10 +87,10 @@ numDof d = (dofX d) + (dofY d) + (dofM d)
 bitSum :: Dof -> Int
 bitSum (Dof d1 d2 d3) = d1 + 2*d2 + 4*d3
 
-indexSeed :: Dof -> NodeType -> GlobalIndex -> [IndexPair]
-indexSeed d nodeType globalIndex = 
+indexSeed :: Dof -> Bool -> GlobalIndex -> [IndexPair]
+indexSeed d isFirstNode globalIndex = 
   let 
-    startIndex = if nodeType == FirstNode then 0 else 3
+    startIndex = if isFirstNode == True then 0 else 3
     globalIndexY = globalIndex + (dofX d)
     globalIndexM = globalIndexY + (dofY d)
     xp = (startIndex,globalIndex)
@@ -105,11 +109,11 @@ indexSeed d nodeType globalIndex =
     7 -> [xp,yp,zp]
     _ -> undefined
 
-indexSeeds :: Node -> Node -> [IndexPair]
-indexSeeds n1 n2 = 
+indexSeeds :: FirstNode -> SecondNode -> [IndexPair]
+indexSeeds (FirstNode n1) (SecondNode n2) = 
   let 
-    ip1 = indexSeed d1 FirstNode $ globNdx n1
-    ip2 = indexSeed d2 SecondNode $ globNdx n2 
+    ip1 = indexSeed d1 True $ globNdx n1
+    ip2 = indexSeed d2 False $ globNdx n2 
     d1 = dof n1
     d2 = dof n2
   in
