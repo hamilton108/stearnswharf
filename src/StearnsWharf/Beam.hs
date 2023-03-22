@@ -1,50 +1,178 @@
 module StearnsWharf.Beam where
 
-import Data.Maybe (fromJust)
-import Data.List (find)
-import Numeric.LinearAlgebra ((<>),(|>),(#>),Matrix,Vector,fromList,fromLists,disp,dispf,tr)
+import Prelude hiding ((<>))
+
+--import Data.Maybe (fromJust)
+--import Data.List (find)
+import Numeric.LinearAlgebra ((<>),(|>),(#>),Matrix,Vector)
+import qualified Numeric.LinearAlgebra as L --fromList,fromLists,disp,dispf,tr)
 -- import Data.Packed.ST (STMatrix,modifyMatrix,STVector,modifyVector)
 import Numeric.LinearAlgebra.Devel (modifyVector,modifyMatrix,STMatrix,STVector,at',atM')
 import Control.Monad.ST (ST)
 
 --import qualified StearnsWharf.Materials as M
+--import StearnsWharf.Common (Cosine(..),(Sine..))
 import qualified StearnsWharf.Load as L
 import qualified StearnsWharf.Node as N
 import qualified StearnsWharf.Profile as P
-import StearnsWharf.Load(Load(..))
-import StearnsWharf.Node (Node(..))
+import StearnsWharf.Load (Load(..))
+import StearnsWharf.Node 
+  ( Node(..)
+  , Geom(..)
+  , FirstNode(..)
+  , SecondNode(..)
+  )
 import StearnsWharf.Profile (Profile)
+import StearnsWharf.Common (Cosine(..),Sine(..))
 
-newtype BeamId = BeamSecId String
+newtype BeamId = BeamId String
 
 data Beam a 
   = Bjlk33 
   { beamId :: BeamId 
-  , n1,n2 :: Node
+  , n1 :: FirstNode
+  , n2 :: SecondNode
+  , bt :: a
+  , ld :: Maybe Load 
+  }
+  | Bjlk11
+  { beamId :: BeamId 
+  , n1 :: FirstNode
+  , n2 :: SecondNode
+  , bt :: a
+  , ld :: Maybe Load 
+  }
+  | Bjlk32
+  { beamId :: BeamId 
+  , n1 :: FirstNode
+  , n2 :: SecondNode
   , bt :: a
   , ld :: Maybe Load 
   }
 
+{-
+calcEal :: Profile a => a -> Double -> Double
+calcEal bt' len = 
+  let 
+    aa = P.area bt'
+    ee = P.emodulus bt'
+    ii = P.secondAreaMoment bt'
+  in
+  ee*aa/len
+-}
+
 createK :: Profile a => Beam a -> Matrix Double
-createK (Bjlk33 _ n1' n2' bt' _) = fromLists [[eal, 0.0, 0.0, -eal, 0.0, 0.0],
-                                            [0.0, k11, k12, 0.0,  k14, k15],
-                                            [0.0, k12, k22, 0.0,  k24, k25],
-                                            [-eal,0.0, 0.0, eal,  0.0, 0.0],
-                                            [0.0, k14, k24, 0.0,  k44, k45],
-                                            [0.0, k15, k25, 0.0,  k45, k55]]
-  where aa = P.area bt'
-        ee = P.emodulus bt'
-        ii = P.secondAreaMoment bt'
-        (N.Geom _ _ len) = N.calcGeom n1' n2'
-        eal = ee*aa/len
-        b = ee*ii/(len**3.0)
-        k11 = 12*b
-        k12 = (-6)*b*len
-        k14 = (-12)*b
-        k15 = k12
-        k22 = 4*b*len**2
-        k24 = 6*b*len
-        k25 = 2*b*len**2
-        k44 = 12*b
-        k45 = 6*b*len
-        k55 = 4*b*len**2
+createK (Bjlk33 _ n1' n2' bt' _) = 
+  let 
+    aa = P.area bt'
+    ee = P.emodulus bt'
+    ii = P.secondAreaMoment bt'
+    (Geom _ _ len) = N.calcGeom n1' n2'
+    eal = ee*aa/len
+    b = ee*ii/(len**3.0)
+    k11 = 12*b
+    k12 = (-6)*b*len
+    k14 = (-12)*b
+    k15 = k12
+    k22 = 4*b*len**2
+    k24 = 6*b*len
+    k25 = 2*b*len**2
+    k44 = k11 -- 12*b
+    k45 = k24 -- 6*b*len
+    k55 = k22 -- 4*b*len**2
+  in    
+  L.fromLists 
+    [ [eal, 0.0, 0.0, -eal, 0.0, 0.0]
+    , [0.0, k11, k12, 0.0,  k14, k15]
+    , [0.0, k12, k22, 0.0,  k24, k25]
+    , [-eal,0.0, 0.0, eal,  0.0, 0.0]
+    , [0.0, k14, k24, 0.0,  k44, k45]
+    , [0.0, k15, k25, 0.0,  k45, k55]
+    ]
+createK (Bjlk11 _ n1' n2' bt' _) = 
+  let 
+    aa = P.area bt'
+    ee = P.emodulus bt'
+    (N.Geom _ _ len) = N.calcGeom n1' n2'
+    eal = ee*aa/len
+  in
+  L.fromLists 
+    [ [eal,  0.0, 0.0, -eal, 0.0, 0.0]
+    , [0.0,  0.0, 0.0, 0.0,  0.0, 0.0]
+    , [0.0,  0.0, 0.0, 0.0,  0.0, 0.0]
+    , [-eal, 0.0, 0.0, eal,  0.0, 0.0]
+    , [0.0,  0.0, 0.0, 0.0,  0.0, 0.0]
+    , [0.0,  0.0, 0.0, 0.0,  0.0, 0.0]
+    ] 
+createK (Bjlk32 _ n1' n2' bt' _) = 
+  let 
+    aa = P.area bt'
+    ee = P.emodulus bt'
+    ii = P.secondAreaMoment bt'
+    (N.Geom _ _ len) = N.calcGeom n1' n2'
+    eal = ee*aa/len
+    b = ee*ii/(len**3.0)
+    k11 = 3*b
+    k24 = 3*b*len
+    k12 = (-k24)
+    k14 = (-k11)
+    k22 = 3*b*len*len
+    k44 = k11
+  in
+  L.fromLists 
+    [ [eal, 0.0, 0.0, -eal, 0.0, 0.0]
+    , [0.0, k11, k12, 0.0,  k14, 0.0]
+    , [0.0, k12, k22, 0.0,  k24, 0.0]
+    , [-eal,0.0, 0.0, eal,  0.0, 0.0]
+    , [0.0, k14, k24, 0.0,  k44, 0.0]
+    , [0.0, 0.0, 0.0, 0.0,  0.0, 0.0]
+    ]
+
+createK_ :: Profile a => Beam a -> Matrix Double
+createK_ beam = 
+  let 
+    (Geom c s _) = calcGeom beam
+    curTg = tg c s 
+    locK = createK beam
+  in
+  L.tr curTg <> locK <> curTg
+  
+
+createSY :: Geom -> Load -> Vector Double
+createSY (Geom _ _ len) load = 
+  let 
+    q1 = (L.qy1 load)
+    q2 = (L.qy2 load)
+    f = len/60.0
+    s0 = 0.0
+    s1 = ((-21.0)*q1 - (9.0*q2)) * f
+    s2 = ((3.0*len*q1) + (2.0*len*q2)) * f
+    s3 = 0.0
+    s4 = ((-9.0)*q1 - (21.0*q2)) * f
+    s5 = ((-2.0*len*q1) - (3.0*len*q2)) * f
+  in
+  L.fromList [s0,s1,s2,s3,s4,s5]
+
+createSY_ :: Geom -> Load -> Vector Double
+createSY_ g@(Geom c s _) load =
+  let 
+    tgm = L.tr $ tg c s
+  in 
+  tgm #> (createSY g load)
+
+emptySY :: Vector Double
+emptySY = L.fromList [0.0,0.0,0.0,0.0,0.0,0.0]
+
+calcGeom :: Profile a => Beam a -> Geom
+calcGeom beam = N.calcGeom (n1 beam) (n2 beam)
+
+tg :: Cosine -> Sine -> Matrix Double
+tg (Cosine c) (Sine s) = 
+  L.fromLists 
+   [ [ c, s, 0,  0, 0, 0]
+   , [-s, c, 0,  0, 0, 0]
+   , [ 0, 0, 1,  0, 0, 0]
+   , [ 0, 0, 0,  c, s, 0]
+   , [ 0, 0, 0, -s, c, 0]
+   , [ 0, 0, 0,  0, 0, 1]
+   ]

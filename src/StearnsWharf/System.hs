@@ -11,5 +11,5 @@ data System
   { nodes :: [Node]
   , loads :: [Load]
   , pointLoads :: [PointLoad]
-  , woodProfiles :: [WoodProfile]
+  , woodProfiles :: [Beam WoodProfile]
   }

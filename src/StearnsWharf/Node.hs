@@ -2,6 +2,12 @@ module StearnsWharf.Node where
 
 import qualified Data.Map as Map
 
+import StearnsWharf.Common 
+  ( floatEq
+  , Cosine(..)
+  , Sine(..)
+  )
+
 type NodeId = String 
 
 type Index = Int
@@ -49,13 +55,26 @@ type NodeMap = Map.Map NodeId Node
 
 data Geom = 
   Geom 
-  { c :: Double
-  , s :: Double
+  { c :: Cosine 
+  , s :: Sine 
   , len :: Double 
-  } deriving Show
+  } deriving (Show)
 
-calcGeom :: Node -> Node -> Geom
-calcGeom n1 n2 = 
+instance Eq Geom where
+    (==) g1 g2 = 
+      let 
+        (Cosine c1') = c g1
+        (Sine s1') = s g1
+        (Cosine c2') = c g2
+        (Sine s2') = s g2
+        cq = floatEq c1' c2'
+        sq = floatEq s1' s2'
+        lq = floatEq (len g1) (len g2)
+      in
+      [True,True,True] == [cq,sq,lq]
+      
+calcGeom :: FirstNode -> SecondNode -> Geom
+calcGeom (FirstNode n1) (SecondNode n2) = 
   let xDelta = (nx n2) - (nx n1) 
       yDelta = (ny n2) - (ny n1) 
       xlen = sqrt (yDelta**2.0 + xDelta**2.0)
@@ -63,8 +82,8 @@ calcGeom n1 n2 =
       xsin = yDelta / xlen  
   in 
   Geom 
-  { c = xcos
-  , s = xsin
+  { c = Cosine xcos
+  , s = Sine xsin
   , len = xlen 
   }
 

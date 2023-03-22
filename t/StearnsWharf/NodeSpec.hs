@@ -7,6 +7,7 @@ where
 
 import Test.Hspec
 
+import StearnsWharf.Common
 import StearnsWharf.Node 
 
 n1 :: Node
@@ -29,15 +30,6 @@ n2 =
   , globNdx = 1
   } 
   
-n3 :: Node
-n3 = 
-  Node 
-  { nodeId = "n3"
-  , nx = 10.0
-  , ny = 0.0
-  , dof = Dof 0 0 1
-  , globNdx = 4
-  } 
 
 n4 :: Node
 n4 = 
@@ -55,15 +47,41 @@ n5 =
   { nodeId = "n5"
   , nx = 20.0
   , ny = 0.0
-  , dof = Dof 0 0 1
+  , dof = Dof 1 1 1
   , globNdx = 6
+  } 
+
+n21 :: Node
+n21 = 
+  Node 
+  { nodeId = "n21"
+  , nx = 0.0
+  , ny = 0.0
+  , dof = Dof 0 0 1
+  , globNdx = 4
+  } 
+
+n22 :: Node
+n22 = 
+  Node 
+  { nodeId = "n22"
+  , nx = 4.33
+  , ny = 2.5
+  , dof = Dof 1 1 1
+  , globNdx = 9
   } 
 
 dof4 :: Dof
 dof4 = Dof 0 0 1
 
+dof5 :: Dof
+dof5 = Dof 1 0 1
+
 dof6 :: Dof
 dof6 = Dof 0 1 1
+
+dof7 :: Dof
+dof7 = Dof 1 1 1
 
 spec :: Spec
 spec = do
@@ -80,16 +98,35 @@ spec = do
         shouldBe 2 (numDof d3)
         shouldBe 3 (bitSum d3)
       it "7 == Dof 1 1 1" $ do
-        let d7 = parseDof "7"
-        shouldBe (Dof 1 1 1) d7 
-        shouldBe 3 (numDof d7)
-        shouldBe 7 (bitSum d7)
-    context "Node" $ do
-      it "indexSeed" $ do
-        --shouldBe [] (indexSeed dof4 FirstNode 0)
-        --shouldBe [] (indexSeed dof4 SecondNode 0)
-        --shouldBe [] (indexSeed dof6 FirstNode 10)
-        shouldBe [] (indexSeed dof6 True 10)
-
+        shouldBe (Dof 1 1 1) dof7
+        shouldBe 3 (numDof dof7)
+        shouldBe 7 (bitSum dof7)
+      it "indexSeed dof5" $ do
+        shouldBe (indexSeed dof5 True 10)  [(0,10),(2,11)] 
+        shouldBe (indexSeed dof5 False 10) [(3,10),(5,11)] 
+      it "indexSeed dof6" $ do
+        shouldBe (indexSeed dof6 True 10)  [(1,10),(2,11)] 
+        shouldBe (indexSeed dof6 False 10) [(4,10),(5,11)] 
+      it "indexSeed dof7" $ do
+        shouldBe (indexSeed dof7 True 10)  [(0,10),(1,11),(2,12)] 
+        shouldBe (indexSeed dof7 False 10) [(3,10),(4,11),(5,12)] 
+    context "Node indexSeed" $ do
+      it "indexSeeds first node n1, second node n2" $ do
+        shouldBe (indexSeeds (FirstNode n1) (SecondNode n2)) [(2,0),(3,1),(4,2),(5,3)]
+      it "indexSeeds first node n2, second node n4" $ do
+        shouldBe (indexSeeds (FirstNode n2) (SecondNode n4)) [(0,1),(1,2),(2,3),(5,5)]
+      it "indexSeeds first node n5, second node n4" $ do
+        shouldBe (indexSeeds (FirstNode n5) (SecondNode n4)) [(0,6),(1,7),(2,8),(5,5)]
+    context "Node calcGeom" $ do
+      it "Geom first node n21, second node n22" $ do
+        let fn = FirstNode n21
+        let sn = SecondNode n22
+        let geom = calcGeom fn sn
+        shouldBe geom (Geom (Cosine 0.86) (Sine 0.5) 5.0) 
+      it "Geom first node n1, second node n2" $ do
+        let fn = FirstNode n1
+        let sn = SecondNode n2
+        let geom = calcGeom fn sn
+        shouldBe geom (Geom (Cosine 1.0) (Sine 0.0) 5.0) 
 
         
