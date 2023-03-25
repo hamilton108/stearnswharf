@@ -13,7 +13,7 @@ newtype Width = Width Double
 newtype Height = Height Double
 
 data StrengthClass = 
-  C16 | C22 | C24 | CEL30c | CEL40c | GL32c | TEST_CLASS
+  C18 | C24 | C30 | C40 | GL28c| GL30c| GL32c | TEST_CLASS
   deriving Show
 
 data MaterialProperties = 
@@ -46,14 +46,13 @@ createWoodProfile ::
   -> Double
   -> WoodProfile 
 createWoodProfile stc w h = case stc of 
-  C16     -> WoodProfile w h (Material Wood (MaterialProperties 8000 16 3.2 stc))
-  {-
-  C22     -> WoodProfile w h (Wood 10000 22 3.8 stc)
-  C24     -> WoodProfile w h (Wood 10000 24 4.0 stc)
-  CEL30c  -> WoodProfile w h (Glulam 14000 30 4.0 stc)
-  CEL40c  -> WoodProfile w h (Glulam 14000 40 4.0 stc)
-  GL32c   -> WoodProfile w h (Glulam 14000 40 4.0 stc)
-  -}
+  C18   -> WoodProfile w h (Material Wood (MaterialProperties 9000 18 3.4 stc))
+  C24   -> WoodProfile w h (Material Wood (MaterialProperties 11000 24 4.0 stc))
+  C30   -> WoodProfile w h (Material Wood (MaterialProperties 12000 30 4.0 stc))
+  C40   -> WoodProfile w h (Material Wood (MaterialProperties 14000 40 4.0 stc))
+  GL28c -> WoodProfile w h (Material Glulam (MaterialProperties 12500 28 3.5 stc))
+  GL30c -> WoodProfile w h (Material Glulam (MaterialProperties 13000 30 3.5 stc))
+  GL32c -> WoodProfile w h (Material Glulam (MaterialProperties 13500 32 3.5 stc))
   TEST_CLASS -> WoodProfile w h (Material Wood (MaterialProperties 1000 10 1.0 stc))
 
 instance Profile WoodProfile where
