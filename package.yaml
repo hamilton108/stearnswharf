@@ -30,6 +30,7 @@ dependencies:
 - optparse-applicative
 - postgresql-simple
 - utf8-string
+- yaml
 - xml
 
 library:

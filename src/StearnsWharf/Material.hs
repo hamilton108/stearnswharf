@@ -1,22 +1,27 @@
+{-# LANGUAGE CPP, NamedFieldPuns, RecordWildCards, StrictData #-}
+
 module StearnsWharf.Material where
 
 data StrengthClass = 
   C16 | C22 | C24 | CEL30c | CEL40c | GL32c | TEST_CLASS
   deriving Show
 
-data Material = 
-  Wood 
+data Mprop = 
+  Mprop 
   { emodulus
   , mySigma
   , myTau :: Double
-  , stClass :: StrengthClass -- ^ Strength Class
-  } 
-  | Glulam 
-  { emodulus
-  , mySigma
-  , myTau :: Double 
-  , stClass :: StrengthClass -- ^ Strength Class
-  } 
+  , stClass :: StrengthClass 
+  } deriving (Show)
+
+data MaterialCategory = 
+  Wood | Glulam  deriving (Show)
+
+data Material = 
+  Material MaterialCategory Mprop
+  deriving (Show)
+  
+{-
   | Steel 
   { emodulus
   , mySigma
@@ -25,6 +30,7 @@ data Material =
   | Concrete 
   { emodulus :: Double 
   } deriving Show
+-}
 
 data Stress = 
   Stress 

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 745b1ba0d9c2337d0f31426fb4f8c55add2c9cef1490e0860ea0bf040491e416
+-- hash: e2c6001597bba158a353e755ccbbd957432da706ad1bc71a3e7225f804c8f83c
 
 name:           stearnswharf
 version:        2.0.0
@@ -26,6 +26,7 @@ library
       StearnsWharf.Beam
       StearnsWharf.Common
       StearnsWharf.Load
+      StearnsWharf.Material
       StearnsWharf.Node
       StearnsWharf.Profile
       StearnsWharf.System
@@ -46,6 +47,7 @@ library
     , postgresql-simple
     , utf8-string
     , xml
+    , yaml
   default-language: Haskell2010
 
 executable stearnswharf-2.0.0
@@ -68,13 +70,16 @@ executable stearnswharf-2.0.0
     , stearnswharf
     , utf8-string
     , xml
+    , yaml
   default-language: Haskell2010
 
 test-suite stearnswharf-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      StearnsWharf.BeamSpec
       StearnsWharf.NodeSpec
+      StearnsWharf.SystemSpec
       Paths_stearnswharf
   hs-source-dirs:
       t
@@ -92,4 +97,5 @@ test-suite stearnswharf-test
     , stearnswharf
     , utf8-string
     , xml
+    , yaml
   default-language: Haskell2010

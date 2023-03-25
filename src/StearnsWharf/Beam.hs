@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP,NamedFieldPuns,RecordWildCards  #-}
+
 module StearnsWharf.Beam where
 
 import Prelude hiding ((<>))
@@ -25,30 +27,22 @@ import StearnsWharf.Node
 import StearnsWharf.Profile (Profile)
 import StearnsWharf.Common (Cosine(..),Sine(..))
 
-newtype BeamId = BeamId String
+newtype BeamId = BeamId String deriving (Show)
+
+data BeamProp a = 
+  BeamProp
+  { beamId :: BeamId 
+  , n1 :: FirstNode
+  , n2 :: SecondNode
+  , bt :: a
+  , ld :: Maybe Load 
+  } deriving (Show)
 
 data Beam a 
-  = Bjlk33 
-  { beamId :: BeamId 
-  , n1 :: FirstNode
-  , n2 :: SecondNode
-  , bt :: a
-  , ld :: Maybe Load 
-  }
-  | Bjlk11
-  { beamId :: BeamId 
-  , n1 :: FirstNode
-  , n2 :: SecondNode
-  , bt :: a
-  , ld :: Maybe Load 
-  }
-  | Bjlk32
-  { beamId :: BeamId 
-  , n1 :: FirstNode
-  , n2 :: SecondNode
-  , bt :: a
-  , ld :: Maybe Load 
-  }
+  = Bjlk33 (BeamProp a)
+  | Bjlk11 (BeamProp a)
+  | Bjlk32 (BeamProp a)
+  deriving (Show)
 
 {-
 calcEal :: Profile a => a -> Double -> Double
@@ -62,12 +56,12 @@ calcEal bt' len =
 -}
 
 createK :: Profile a => Beam a -> Matrix Double
-createK (Bjlk33 _ n1' n2' bt' _) = 
+createK (Bjlk33 BeamProp{n1, n2, bt}) = 
   let 
-    aa = P.area bt'
-    ee = P.emodulus bt'
-    ii = P.secondAreaMoment bt'
-    (Geom _ _ len) = N.calcGeom n1' n2'
+    aa = P.area bt
+    ee = P.emodulus bt
+    ii = P.secondAreaMoment bt
+    (Geom _ _ len) = N.calcGeom n1 n2
     eal = ee*aa/len
     b = ee*ii/(len**3.0)
     k11 = 12*b
@@ -89,11 +83,11 @@ createK (Bjlk33 _ n1' n2' bt' _) =
     , [0.0, k14, k24, 0.0,  k44, k45]
     , [0.0, k15, k25, 0.0,  k45, k55]
     ]
-createK (Bjlk11 _ n1' n2' bt' _) = 
+createK (Bjlk11 BeamProp{n1, n2, bt}) = 
   let 
-    aa = P.area bt'
-    ee = P.emodulus bt'
-    (N.Geom _ _ len) = N.calcGeom n1' n2'
+    aa = P.area bt
+    ee = P.emodulus bt
+    (Geom _ _ len) = N.calcGeom n1 n2
     eal = ee*aa/len
   in
   L.fromLists 
@@ -104,12 +98,12 @@ createK (Bjlk11 _ n1' n2' bt' _) =
     , [0.0,  0.0, 0.0, 0.0,  0.0, 0.0]
     , [0.0,  0.0, 0.0, 0.0,  0.0, 0.0]
     ] 
-createK (Bjlk32 _ n1' n2' bt' _) = 
+createK (Bjlk32 BeamProp{n1, n2, bt}) = 
   let 
-    aa = P.area bt'
-    ee = P.emodulus bt'
-    ii = P.secondAreaMoment bt'
-    (N.Geom _ _ len) = N.calcGeom n1' n2'
+    aa = P.area bt
+    ee = P.emodulus bt
+    ii = P.secondAreaMoment bt
+    (Geom _ _ len) = N.calcGeom n1 n2
     eal = ee*aa/len
     b = ee*ii/(len**3.0)
     k11 = 3*b
@@ -164,7 +158,8 @@ emptySY :: Vector Double
 emptySY = L.fromList [0.0,0.0,0.0,0.0,0.0,0.0]
 
 calcGeom :: Profile a => Beam a -> Geom
-calcGeom beam = N.calcGeom (n1 beam) (n2 beam)
+calcGeom (Bjlk33 beam) = N.calcGeom (n1 beam) (n2 beam)
+calcGeom _ = (Geom (Cosine 0.0) (Sine 0.0) 0.0)
 
 tg :: Cosine -> Sine -> Matrix Double
 tg (Cosine c) (Sine s) = 

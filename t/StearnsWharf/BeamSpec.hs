@@ -14,7 +14,6 @@ import StearnsWharf.Node hiding (calcGeom)
 import StearnsWharf.Load
 import StearnsWharf.Beam
 import StearnsWharf.WoodProfile
-import StearnsWharf.Material
 
 diffLists :: [Double] -> [Double] ->[Double]
 diffLists [] _ = []
@@ -108,10 +107,10 @@ tv4 :: Vector Double
 tv4 = fromList []
 
 load1 :: Load
-load1 = (Load 0.0 (-10.0) 0.0 (-10.0) 1.5) 
+load1 = (Load (LoadId "l1") 0.0 (-10.0) 0.0 (-10.0) 1.5) 
 
 load2 :: Load
-load2 = (Load 0.0 (-10.0) 0.0 0.0 1.5) 
+load2 = (Load (LoadId "l2") 0.0 (-10.0) 0.0 0.0 1.5) 
 
 c24 :: WoodProfile
 c24 = createWoodProfile TEST_CLASS 100 200
@@ -124,8 +123,9 @@ beam1 =
     sn = (SecondNode no12)
     load = Nothing 
     profile = c24
+    bp = BeamProp bid fn sn profile load
   in
-  (Bjlk33 bid fn sn profile load)
+  Bjlk33 bp
 
 beam2 :: Beam WoodProfile
 beam2 = 
@@ -135,8 +135,9 @@ beam2 =
     sn = (SecondNode no13)
     load = Nothing 
     profile = c24 
+    bp = BeamProp bid fn sn profile load
   in
-  (Bjlk33 bid fn sn profile load)
+  Bjlk33 bp
 
 beam3 :: Beam WoodProfile
 beam3 = 
@@ -146,8 +147,9 @@ beam3 =
     sn = (SecondNode no2)
     load = Nothing 
     profile = c24 
+    bp = BeamProp bid fn sn profile load
   in
-  (Bjlk33 bid fn sn profile load)
+  Bjlk33 bp
 
 
 sy1 :: Vector Double

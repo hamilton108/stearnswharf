@@ -24,9 +24,9 @@ type IndexPair = (LocalIndex,GlobalIndex)
 
 -- data NodeType = IsFirstNode | IsSecondNode deriving Eq
 
-newtype FirstNode = FirstNode Node 
+newtype FirstNode = FirstNode Node deriving (Show)
 
-newtype SecondNode = SecondNode Node 
+newtype SecondNode = SecondNode Node deriving (Show)
 
 data MatrixCoord = MatrixCoord { row, col :: Index } deriving Show
 

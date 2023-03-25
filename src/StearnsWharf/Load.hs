@@ -2,11 +2,11 @@ module StearnsWharf.Load where
 
 import StearnsWharf.Node (Node(..))
 
-newtype LoadId = LoadId String
+newtype LoadId = LoadId String deriving (Show)
 
 data PointLoad 
   = PointLoad 
-  { loadId :: LoadId
+  { ploadId :: LoadId
   , plVal :: Double
   , node :: Node
   , plAngle :: Double
@@ -22,9 +22,6 @@ data Load
   , qx2 :: Double
   , qy2 :: Double
   , loadFactor :: Double 
-  }
-  | MultiLoad 
-  { loads :: [Load]
   }
   deriving Show
 
