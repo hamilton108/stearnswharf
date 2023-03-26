@@ -1,22 +1,21 @@
 ---
-nodes:
-  - { id: 1, x: 0.0,  y: 0.0, dof: 1 }
-  - { id: 2, x: 1.75, y: 0.0, dof: 7 }
-  - { id: 3, x: 3.5,  y: 0.0, dof: 1 }
-  - { id: 4, x: 7.0,  y: 0.0, dof: 7 }
-  - { id: 5, x: 10.0, y: 0.0, dof: 1 }
-
+nodes: 
+  - { nid: 1, x: 0.0,  y: 0.0, dof: 1 }
+  - { nid: 2, x: 1.75, y: 0.0, dof: 7 }
+  - { nid: 3, x: 3.5,  y: 0.0, dof: 1 }
+  - { nid: 4, x: 7.0,  y: 0.0, dof: 7 }
+  - { nid: 5, x: 10.0, y: 0.0, dof: 1 }
 loads:
-  - { id: 1, f: 1.4, x: 0.0, y: -10.0 }
-  - { id: 2, f: 1.4, x: 0.0, y: -23.0 }
-point-loads: 
-  - { id: 1, f: 1.4, v: -55.0, ang: 90, node: 2 }
-wood-profiles:
-  - st-class: GL32c 
+  - { lid: 1, f: 1.4, lx: 0.0, ly: -10.0 }
+  - { lid: 2, f: 1.4, lx: 0.0, ly: -23.0 }
+pointloads: 
+  - { pid: 1, pf: 1.4, v: -55.0, ang: 90, pnode: 2 }
+woodprofiles:
+  - stclass: GL32c 
     profiles: 
      - { w: 90, h: 270, 
-         b33: [{ id: 1, ld: 1, n1: 1, n2: 2 },
-               { id: 2, ld: 1, n1: 2, n2: 3 }] }
+         b33: [{ bid: 1, ld: 1, n1: 1, n2: 2 },
+               { bid: 2, ld: 1, n1: 2, n2: 3 }] }
      - { w: 115, h: 270, 
-         b33: [{ id: 3, ld: 1, n1: 3, n2: 4 },
-               { id: 4, ld: 1, n1: 4, n2: 5 }] }
+         b33: [{ bid: 3, ld: 1, n1: 3, n2: 4 },
+               { bid: 4, ld: 1, n1: 4, n2: 5 }] }

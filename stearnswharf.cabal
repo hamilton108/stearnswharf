@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e2c6001597bba158a353e755ccbbd957432da706ad1bc71a3e7225f804c8f83c
+-- hash: 3c6413c019b97a277156a8d7573b9b414610718ffe21ded4089dc3584d615e80
 
 name:           stearnswharf
 version:        2.0.0
@@ -25,11 +25,13 @@ library
   exposed-modules:
       StearnsWharf.Beam
       StearnsWharf.Common
+      StearnsWharf.Demo
       StearnsWharf.Load
       StearnsWharf.Material
       StearnsWharf.Node
       StearnsWharf.Profile
       StearnsWharf.System
+      StearnsWharf.Transform.YamlTransform
       StearnsWharf.WoodProfile
   other-modules:
       Paths_stearnswharf
@@ -37,6 +39,7 @@ library
       src
   build-depends:
       HUnit
+    , aeson
     , base >=4.7 && <5
     , cmdargs
     , containers
@@ -59,6 +62,7 @@ executable stearnswharf-2.0.0
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall -Wincomplete-record-updates -Wincomplete-uni-patterns -Wcompat -Widentities -Wpartial-fields -Wredundant-constraints
   build-depends:
       HUnit
+    , aeson
     , base >=4.7 && <5
     , cmdargs
     , containers
@@ -80,12 +84,14 @@ test-suite stearnswharf-test
       StearnsWharf.BeamSpec
       StearnsWharf.NodeSpec
       StearnsWharf.SystemSpec
+      StearnsWharf.Transform.YamlTransformSpec
       Paths_stearnswharf
   hs-source-dirs:
       t
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HUnit
+    , aeson
     , base >=4.7 && <5
     , cmdargs
     , containers

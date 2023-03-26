@@ -157,7 +157,7 @@ createSY_ g@(Geom c s _) load =
 emptySY :: Vector Double
 emptySY = L.fromList [0.0,0.0,0.0,0.0,0.0,0.0]
 
-calcGeom :: Profile a => Beam a -> Geom
+calcGeom :: Beam a -> Geom
 calcGeom (Bjlk33 beam) = N.calcGeom (n1 beam) (n2 beam)
 calcGeom _ = (Geom (Cosine 0.0) (Sine 0.0) 0.0)
 
