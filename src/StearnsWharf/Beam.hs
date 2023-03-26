@@ -27,7 +27,8 @@ import StearnsWharf.Node
 import StearnsWharf.Profile (Profile)
 import StearnsWharf.Common (Cosine(..),Sine(..))
 
-newtype BeamId = BeamId String deriving (Show)
+-- newtype BeamId = BeamId String deriving (Show)
+type BeamId = Int -- BeamId String deriving (Show)
 
 data BeamProp a = 
   BeamProp

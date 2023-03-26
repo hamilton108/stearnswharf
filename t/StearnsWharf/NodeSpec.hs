@@ -13,7 +13,7 @@ import StearnsWharf.Node
 n1 :: Node
 n1 = 
   Node 
-  { nodeId = "n1"
+  { nodeId = 1 
   , nx = 0.0
   , ny = 0.0
   , dof = Dof 0 0 1
@@ -23,7 +23,7 @@ n1 =
 n2 :: Node
 n2 = 
   Node 
-  { nodeId = "n2"
+  { nodeId = 2
   , nx = 5.0
   , ny = 0.0
   , dof = Dof 1 1 1
@@ -34,7 +34,7 @@ n2 =
 n4 :: Node
 n4 = 
   Node 
-  { nodeId = "n4"
+  { nodeId = 4
   , nx = 15.0
   , ny = 0.0
   , dof = Dof 0 0 1
@@ -44,7 +44,7 @@ n4 =
 n5 :: Node
 n5 = 
   Node 
-  { nodeId = "n5"
+  { nodeId = 5
   , nx = 20.0
   , ny = 0.0
   , dof = Dof 1 1 1
@@ -54,7 +54,7 @@ n5 =
 n21 :: Node
 n21 = 
   Node 
-  { nodeId = "n21"
+  { nodeId = 6
   , nx = 0.0
   , ny = 0.0
   , dof = Dof 0 0 1
@@ -64,16 +64,17 @@ n21 =
 n22 :: Node
 n22 = 
   Node 
-  { nodeId = "n22"
+  { nodeId = 7
   , nx = 4.33
   , ny = 2.5
   , dof = Dof 1 1 1
   , globNdx = 9
   } 
 
-dof4 :: Dof
+{- dof4 :: Dof
 dof4 = Dof 0 0 1
-
+ -}
+ 
 dof5 :: Dof
 dof5 = Dof 1 0 1
 

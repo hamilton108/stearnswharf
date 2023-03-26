@@ -37,7 +37,7 @@ eqVec v1 v2 =
 no1 :: Node
 no1 = 
   Node 
-  { nodeId = "n1"
+  { nodeId = 1
   , nx = 0.0
   , ny = 0.0
   , dof = Dof 0 0 1
@@ -47,7 +47,7 @@ no1 =
 no12 :: Node
 no12 = 
   Node 
-  { nodeId = "n12"
+  { nodeId = 2 
   , nx = 10.0
   , ny = 0.0
   , dof = Dof 0 0 1
@@ -57,7 +57,7 @@ no12 =
 no13 :: Node
 no13 = 
   Node 
-  { nodeId = "n13"
+  { nodeId = 3
   , nx = 0.0
   , ny = 10.0
   , dof = Dof 0 0 1
@@ -67,7 +67,7 @@ no13 =
 no14 :: Node
 no14 = 
   Node 
-  { nodeId = "n14"
+  { nodeId = 4
   , nx = 10.0
   , ny = 0.0
   , dof = Dof 0 0 1
@@ -77,7 +77,7 @@ no14 =
 no2 :: Node
 no2 = 
   Node 
-  { nodeId = "n2"
+  { nodeId = 5
   , nx = 4.33
   , ny = 2.5
   , dof = Dof 1 1 1
@@ -87,7 +87,7 @@ no2 =
 no3 :: Node
 no3 = 
   Node 
-  { nodeId = "n3"
+  { nodeId = 6
   , nx = 8.66
   , ny = 5.0
   , dof = Dof 0 0 1
@@ -107,10 +107,10 @@ tv4 :: Vector Double
 tv4 = fromList []
 
 load1 :: Load
-load1 = (Load (LoadId "l1") 0.0 (-10.0) 0.0 (-10.0) 1.5) 
+load1 = (Load 1 0.0 (-10.0) 0.0 (-10.0) 1.5) 
 
 load2 :: Load
-load2 = (Load (LoadId "l2") 0.0 (-10.0) 0.0 0.0 1.5) 
+load2 = (Load 2 0.0 (-10.0) 0.0 0.0 1.5) 
 
 c24 :: WoodProfile
 c24 = createWoodProfile TEST_CLASS 100 200
@@ -118,7 +118,7 @@ c24 = createWoodProfile TEST_CLASS 100 200
 beam1 :: Beam WoodProfile
 beam1 = 
   let 
-    bid = BeamId "beam1"
+    bid = 1
     fn = (FirstNode no1)
     sn = (SecondNode no12)
     load = Nothing 
@@ -130,7 +130,7 @@ beam1 =
 beam2 :: Beam WoodProfile
 beam2 = 
   let 
-    bid = BeamId "beam2"
+    bid = 2 
     fn = (FirstNode no1)
     sn = (SecondNode no13)
     load = Nothing 
@@ -142,7 +142,7 @@ beam2 =
 beam3 :: Beam WoodProfile
 beam3 = 
   let 
-    bid = BeamId "beam3"
+    bid = 3
     fn = (FirstNode no1)
     sn = (SecondNode no2)
     load = Nothing 

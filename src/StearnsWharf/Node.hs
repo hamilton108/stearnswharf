@@ -8,7 +8,7 @@ import StearnsWharf.Common
   , Sine(..)
   )
 
-type NodeId = String 
+type NodeId = Int
 
 type Index = Int
 

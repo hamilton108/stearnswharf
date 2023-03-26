@@ -2,7 +2,9 @@ module StearnsWharf.Load where
 
 import StearnsWharf.Node (Node(..))
 
-newtype LoadId = LoadId String deriving (Show)
+-- newtype LoadId = LoadId String deriving (Show)
+
+type LoadId = Int -- LoadId String deriving (Show)
 
 data PointLoad 
   = PointLoad 
