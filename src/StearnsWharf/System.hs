@@ -12,8 +12,8 @@ data System
   , loads :: [Load]
   , pointLoads :: [PointLoad]
   , woodProfiles :: [Beam WoodProfile]
-  }
-  
+  } deriving (Show)
+
 emptySystem :: System
 emptySystem = 
   System

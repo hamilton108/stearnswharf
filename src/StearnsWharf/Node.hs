@@ -46,10 +46,10 @@ data Node =
   } deriving (Show)
 
 instance Eq Node where
-    (==) n1 n2 = (globNdx n1) == (globNdx n2)
+    (==) n1 n2 = (nodeId n1) == (nodeId n2)
 
 instance Ord Node where
-    compare n1 n2 = compare (globNdx n1) (globNdx n2)
+    compare n1 n2 = compare (nodeId n1) (nodeId n2)
 
 type NodeMap = Map.Map NodeId Node
 
@@ -98,6 +98,19 @@ parseDof s =
     "5" -> Dof 1 0 1
     "6" -> Dof 0 1 1
     "7" -> Dof 1 1 1
+    _ -> undefined
+
+bitSumToDof :: Int -> Dof
+bitSumToDof bits = 
+  case bits of 
+    0 -> Dof 0 0 0
+    1 -> Dof 1 0 0
+    2 -> Dof 0 1 0 
+    3 -> Dof 1 1 0
+    4 -> Dof 0 0 1 
+    5 -> Dof 1 0 1
+    6 -> Dof 0 1 1
+    7 -> Dof 1 1 1
     _ -> undefined
 
 numDof :: Dof -> Int

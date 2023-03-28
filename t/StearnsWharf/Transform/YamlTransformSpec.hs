@@ -6,6 +6,7 @@ module StearnsWharf.Transform.YamlTransformSpec
 where 
 
 import Test.Hspec
+import Data.List (sort)
 
 import StearnsWharf.Transform.YamlTransform
 import StearnsWharf.Node 
@@ -13,9 +14,22 @@ import StearnsWharf.Load
 import StearnsWharf.Beam
 import StearnsWharf.WoodProfile
 import StearnsWharf.System
+import qualified StearnsWharf.System as System
+import qualified StearnsWharf.Node as Node
+import qualified StearnsWharf.Transform.YamlTransform as YT
 
-testSystem :: YamlSystem
-testSystem = 
+nodeEq :: (Node, Node) -> Bool
+nodeEq (n1, n2) = 
+  all ((==) True)
+  [ Node.nodeId n1 == Node.nodeId n2
+  , Node.nx n1 == Node.nx n2
+  , Node.ny n1 == Node.ny n2
+  , Node.dof n1 == Node.dof n2
+  , Node.globNdx n1 == Node.globNdx n2
+  ]
+
+testSystemYaml :: YamlSystem
+testSystemYaml = 
   YamlSystem 
   { nodes = 
     [ YamlNode {nid = 1, x = 0.0, y = 0.0, dof = 1}
@@ -56,11 +70,48 @@ testSystem =
       ]
     }
 
+testSystem :: System
+testSystem = 
+  System
+  { nodes = 
+    [ Node {nodeId = 1, nx = 0.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0}
+    , Node {nodeId = 2, nx = 1.75,  ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1}
+    , Node {nodeId = 3, nx = 3.5,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4}
+    , Node {nodeId = 4, nx = 7.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5}
+    , Node {nodeId = 5, nx = 10.0,  ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 8}
+    ]
+  , loads = []
+  , pointLoads = []
+  , woodProfiles = []
+  }
+
+equalNodes :: [Node] -> [Node] -> Bool
+equalNodes expected actual = 
+  all ((== ) True) $ map nodeEq $ zip expected actual 
+  
+
+equalLoads :: [Load] -> [Load] -> Bool
+equalLoads expected actual = 
+  True
+
+equalSystem :: System -> System -> Bool
+equalSystem expected actual = 
+  all (\x -> x == True)
+  [ equalNodes (System.nodes expected) (System.nodes actual)
+  , equalLoads (System.loads expected) (System.loads actual)
+  ]
+  
 spec :: Spec
 spec = do
   describe "YamlTransformSpec" $ do
-    context "context" $ do
-      it "it" $ do
-        shouldBe 1 (1 :: Int)
+    context "transformYamlToSystem" $ do
+      it "transformNodes" $ do
+        let actual = sort $ transformNodes testSystemYaml
+        shouldBe (equalNodes (System.nodes testSystem) actual) True
+      {-
+      it "testSystemYaml transformed to testSystem" $ do
+        let expected = transformYamlToSystem testSystemYaml
+        shouldBe (equalSystem expected testSystem) True
+      -}
 
 

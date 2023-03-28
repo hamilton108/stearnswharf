@@ -1,8 +1,8 @@
-{-# LANGUAGE DeriveGeneric,CPP,OverloadedStrings,NamedFieldPuns,RecordWildCards,StrictData #-}
+{-# LANGUAGE DeriveGeneric,OverloadedStrings,NamedFieldPuns,RecordWildCards,StrictData #-}
 
-module StearnsWharf.Transform.YamlTransform 
-where
+module StearnsWharf.Transform.YamlTransform where
 
+-- import Control.Monad.State (State,runState,get,put)
 import Control.Monad.IO.Class (liftIO)
 import GHC.Generics (Generic)
 import Data.Yaml 
@@ -10,13 +10,16 @@ import Data.Yaml
   , ParseException
   , decodeFileEither
   )
+{-
 import StearnsWharf.System 
   ( System(..)
   , emptySystem
-  )
+  ) 
+-}
+import qualified StearnsWharf.System as Sys
 import StearnsWharf.Beam (Beam(..))
 import StearnsWharf.Load(Load(..), PointLoad(..))
-import StearnsWharf.Node (Node(..))
+import qualified StearnsWharf.Node as N 
 import StearnsWharf.WoodProfile(WoodProfile(..))
 
 data YamlNode = 
@@ -82,9 +85,25 @@ instance FromJSON YamlLoad
 instance FromJSON YamlNode
 instance FromJSON YamlSystem 
 
-transformNodes :: YamlSystem -> [Node]
-transformNodes ymlsys = 
-  []
+transformNode :: YamlNode -> Int -> N.Node
+transformNode yn globalIndex =
+  N.Node (nid yn) (x yn) (y yn) ((N.bitSumToDof . dof) yn) globalIndex
+
+transformNodes :: YamlSystem -> [N.Node]
+transformNodes ysys = go (nodes ysys) 0 []
+  where 
+    go :: [YamlNode] -> Int -> [N.Node] -> [N.Node]
+    go [] _ acc = acc
+    go (x : xs) globalIndex acc = 
+      let 
+        newNode = transformNode x globalIndex
+        newGlobIndex = globalIndex + ((N.numDof . N.dof) newNode)
+        newAcc = newNode : acc
+      in
+      go xs newGlobIndex newAcc
+      
+  
+-- map transformNode (nodes ysys)
 
 parseYaml' :: FilePath -> IO (Either ParseException YamlSystem)
 parseYaml' fname = 
@@ -102,11 +121,16 @@ demo =
       Right res1 -> 
         putStrLn $ show res1
 
-transformYamlToSystem :: YamlSystem -> System
+transformYamlToSystem :: YamlSystem -> Sys.System
 transformYamlToSystem ymlsystem = 
-  emptySystem
+  Sys.System
+  { Sys.nodes = transformNodes ymlsystem
+  , Sys.loads = []
+  , Sys.pointLoads = []
+  , Sys.woodProfiles = []
+  }
 
-parseYaml :: FilePath -> IO (Maybe System)
+parseYaml :: FilePath -> IO (Maybe Sys.System)
 parseYaml fname = 
   parseYaml' fname >>= \ymlsystem -> 
     case ymlsystem of 
