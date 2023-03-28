@@ -18,7 +18,8 @@ import StearnsWharf.System
 -}
 import qualified StearnsWharf.System as Sys
 import StearnsWharf.Beam (Beam(..))
-import StearnsWharf.Load(Load(..), PointLoad(..))
+import qualified StearnsWharf.Load as L
+-- import StearnsWharf.Load(Load(..), PointLoad(..))
 import qualified StearnsWharf.Node as N 
 import StearnsWharf.WoodProfile(WoodProfile(..))
 
@@ -34,8 +35,8 @@ data YamlLoad =
   YamlLoad 
   { lid :: Int
   , f :: Double
-  , lx :: Double
-  , ly :: Double
+  , ly1 :: Double
+  , ly2 :: Double
   } deriving (Show,Eq,Generic)
 
 data YamlPointLoad = 
@@ -102,8 +103,13 @@ transformNodes ysys = go (nodes ysys) 0 []
       in
       go xs newGlobIndex newAcc
       
-  
--- map transformNode (nodes ysys)
+transformLoad :: YamlLoad -> L.Load  
+transformLoad yl = 
+  L.Load (lid yl) 0.0 (ly1 yl) 0.0 (ly2 yl) (f yl)
+
+transformLoads :: YamlSystem -> [L.Load]
+transformLoads ysys = 
+  map transformLoad (loads ysys)
 
 parseYaml' :: FilePath -> IO (Either ParseException YamlSystem)
 parseYaml' fname = 
@@ -125,7 +131,7 @@ transformYamlToSystem :: YamlSystem -> Sys.System
 transformYamlToSystem ymlsystem = 
   Sys.System
   { Sys.nodes = transformNodes ymlsystem
-  , Sys.loads = []
+  , Sys.loads = transformLoads ymlsystem
   , Sys.pointLoads = []
   , Sys.woodProfiles = []
   }

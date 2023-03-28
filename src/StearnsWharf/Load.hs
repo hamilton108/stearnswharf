@@ -28,3 +28,8 @@ data Load
   deriving Show
 
 
+instance Eq Load where
+    (==) l1 l2 = (loadId l1) == (loadId l2)
+
+instance Ord Load where
+    compare l1 l2 = compare (loadId l1) (loadId l2)

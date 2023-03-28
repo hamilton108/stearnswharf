@@ -6,8 +6,8 @@ nodes:
   - { nid: 4, x: 7.0,  y: 0.0, dof: 7 }
   - { nid: 5, x: 10.0, y: 0.0, dof: 1 }
 loads:
-  - { lid: 1, f: 1.4, lx: 0.0, ly: -10.0 }
-  - { lid: 2, f: 1.4, lx: 0.0, ly: -23.0 }
+  - { lid: 1, f: 1.4, ly1: -10.0, ly2: -10.0 }
+  - { lid: 2, f: 1.4, ly1: 0.0, ly2: -23.0 }
 pointloads: 
   - { pid: 1, pf: 1.4, v: -55.0, ang: 90, pnode: 2 }
 woodprofiles:

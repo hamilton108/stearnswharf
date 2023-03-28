@@ -16,6 +16,7 @@ import StearnsWharf.WoodProfile
 import StearnsWharf.System
 import qualified StearnsWharf.System as System
 import qualified StearnsWharf.Node as Node
+import qualified StearnsWharf.Load as Load
 import qualified StearnsWharf.Transform.YamlTransform as YT
 
 nodeEq :: (Node, Node) -> Bool
@@ -26,6 +27,17 @@ nodeEq (n1, n2) =
   , Node.ny n1 == Node.ny n2
   , Node.dof n1 == Node.dof n2
   , Node.globNdx n1 == Node.globNdx n2
+  ]
+
+loadEq :: (Load, Load) -> Bool
+loadEq (l1, l2) = 
+  all ((==) True)
+  [ Load.loadId l1 == Load.loadId l2
+  , Load.qx1 l1 == Load.qx1 l2
+  , Load.qy1 l1 == Load.qy1 l2
+  , Load.qx2 l1 == Load.qx2 l2
+  , Load.qy2 l1 == Load.qy2 l2
+  , Load.loadFactor l1 == Load.loadFactor l2
   ]
 
 testSystemYaml :: YamlSystem
@@ -39,8 +51,8 @@ testSystemYaml =
     , YamlNode {nid = 5, x = 10.0, y = 0.0, dof = 1}
     ]
   , loads = 
-    [ YamlLoad {lid = 1, f = 1.4, lx = 0.0, ly = -10.0}
-    , YamlLoad {lid = 2, f = 1.4, lx = 0.0, ly = -23.0}
+    [ YamlLoad {lid = 1, f = 1.4, ly1 = -10.0, ly2 = -10.0}
+    , YamlLoad {lid = 2, f = 1.4, ly1 = 0.0, ly2 = -23.0}
     ]
   , pointloads = 
     [ YamlPointLoad {pid = 1, pf = 1.4, v = -55.0, ang = 90, pnode = 2}
@@ -74,13 +86,16 @@ testSystem :: System
 testSystem = 
   System
   { nodes = 
-    [ Node {nodeId = 1, nx = 0.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0}
-    , Node {nodeId = 2, nx = 1.75,  ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1}
-    , Node {nodeId = 3, nx = 3.5,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4}
-    , Node {nodeId = 4, nx = 7.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5}
-    , Node {nodeId = 5, nx = 10.0,  ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 8}
-    ]
-  , loads = []
+      [ Node {nodeId = 1, nx = 0.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0}
+      , Node {nodeId = 2, nx = 1.75,  ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1}
+      , Node {nodeId = 3, nx = 3.5,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4}
+      , Node {nodeId = 4, nx = 7.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5}
+      , Node {nodeId = 5, nx = 10.0,  ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 8}
+      ]
+  , loads =
+      [ Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
+      , Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -23.0, loadFactor = 1.4}
+      ] 
   , pointLoads = []
   , woodProfiles = []
   }
@@ -92,7 +107,7 @@ equalNodes expected actual =
 
 equalLoads :: [Load] -> [Load] -> Bool
 equalLoads expected actual = 
-  True
+  all ((== ) True) $ map loadEq $ zip expected actual 
 
 equalSystem :: System -> System -> Bool
 equalSystem expected actual = 
@@ -108,6 +123,9 @@ spec = do
       it "transformNodes" $ do
         let actual = sort $ transformNodes testSystemYaml
         shouldBe (equalNodes (System.nodes testSystem) actual) True
+      it "transformLoads" $ do
+        let actual = sort $ transformLoads testSystemYaml
+        shouldBe (equalLoads (System.loads testSystem) actual) True
       {-
       it "testSystemYaml transformed to testSystem" $ do
         let expected = transformYamlToSystem testSystemYaml
