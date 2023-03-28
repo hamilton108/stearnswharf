@@ -9,35 +9,42 @@ import Test.Hspec
 import Data.List (sort)
 
 import StearnsWharf.Transform.YamlTransform
-import StearnsWharf.Node 
-import StearnsWharf.Load
-import StearnsWharf.Beam
-import StearnsWharf.WoodProfile
-import StearnsWharf.System
-import qualified StearnsWharf.System as System
-import qualified StearnsWharf.Node as Node
-import qualified StearnsWharf.Load as Load
+
+import qualified StearnsWharf.System as S
+import qualified StearnsWharf.Node as N
+import qualified StearnsWharf.Load as L
+--import qualified StearnsWharf.WoodProfile as W
 import qualified StearnsWharf.Transform.YamlTransform as YT
 
-nodeEq :: (Node, Node) -> Bool
+nodeEq :: (N.Node, N.Node) -> Bool
 nodeEq (n1, n2) = 
   all ((==) True)
-  [ Node.nodeId n1 == Node.nodeId n2
-  , Node.nx n1 == Node.nx n2
-  , Node.ny n1 == Node.ny n2
-  , Node.dof n1 == Node.dof n2
-  , Node.globNdx n1 == Node.globNdx n2
+  [ N.nodeId n1 == N.nodeId n2
+  , N.nx n1 == N.nx n2
+  , N.ny n1 == N.ny n2
+  , N.dof n1 == N.dof n2
+  , N.globNdx n1 == N.globNdx n2
   ]
 
-loadEq :: (Load, Load) -> Bool
+loadEq :: (L.Load, L.Load) -> Bool
 loadEq (l1, l2) = 
   all ((==) True)
-  [ Load.loadId l1 == Load.loadId l2
-  , Load.qx1 l1 == Load.qx1 l2
-  , Load.qy1 l1 == Load.qy1 l2
-  , Load.qx2 l1 == Load.qx2 l2
-  , Load.qy2 l1 == Load.qy2 l2
-  , Load.loadFactor l1 == Load.loadFactor l2
+  [ L.loadId l1 == L.loadId l2
+  , L.qx1 l1 == L.qx1 l2
+  , L.qy1 l1 == L.qy1 l2
+  , L.qx2 l1 == L.qx2 l2
+  , L.qy2 l1 == L.qy2 l2
+  , L.loadFactor l1 == L.loadFactor l2
+  ]
+
+pointLoadEq :: (L.PointLoad, L.PointLoad) -> Bool
+pointLoadEq (l1, l2) = 
+  all ((==) True)
+  [ L.ploadId l1 == L.ploadId l2
+  , L.plVal l1 == L.plVal l2
+  , L.plAngle l1 == L.plAngle l2
+  , L.plFactor l1 == L.plFactor l2
+  , L.node l1 == L.node l2
   ]
 
 testSystemYaml :: YamlSystem
@@ -82,54 +89,81 @@ testSystemYaml =
       ]
     }
 
-testSystem :: System
+testSystem :: S.System
 testSystem = 
-  System
+  S.System
   { nodes = 
-      [ Node {nodeId = 1, nx = 0.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0}
-      , Node {nodeId = 2, nx = 1.75,  ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1}
-      , Node {nodeId = 3, nx = 3.5,   ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4}
-      , Node {nodeId = 4, nx = 7.0,   ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5}
-      , Node {nodeId = 5, nx = 10.0,  ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 8}
+      [ N.Node {nodeId = 1, nx = 0.0,   ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0}
+      , N.Node {nodeId = 2, nx = 1.75,  ny = 0.0, dof = N.Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1}
+      , N.Node {nodeId = 3, nx = 3.5,   ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4}
+      , N.Node {nodeId = 4, nx = 7.0,   ny = 0.0, dof = N.Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5}
+      , N.Node {nodeId = 5, nx = 10.0,  ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 8}
       ]
   , loads =
-      [ Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
-      , Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -23.0, loadFactor = 1.4}
+      [ L.Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
+      , L.Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -23.0, loadFactor = 1.4}
       ] 
-  , pointLoads = []
+  , pointLoads = 
+      [ L.PointLoad 
+          { ploadId = 1
+          , plVal = -55.0
+          , plAngle = 90.0
+          , plFactor = 1.4
+          , node = 
+            N.Node 
+              { nodeId = 2
+              , nx = 1.75
+              , ny = 0.0
+              , dof = N.Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1
+              }
+          }
+      ]
   , woodProfiles = []
   }
 
-equalNodes :: [Node] -> [Node] -> Bool
+equalNodes :: [N.Node] -> [N.Node] -> Bool
 equalNodes expected actual = 
   all ((== ) True) $ map nodeEq $ zip expected actual 
   
 
-equalLoads :: [Load] -> [Load] -> Bool
+equalLoads :: [L.Load] -> [L.Load] -> Bool
 equalLoads expected actual = 
   all ((== ) True) $ map loadEq $ zip expected actual 
 
-equalSystem :: System -> System -> Bool
+equalPointLoads :: [L.PointLoad] -> [L.PointLoad] -> Bool
+equalPointLoads expected actual = 
+  all ((== ) True) $ map pointLoadEq $ zip expected actual 
+
+equalSystem :: S.System -> S.System -> Bool
 equalSystem expected actual = 
   all (\x -> x == True)
-  [ equalNodes (System.nodes expected) (System.nodes actual)
-  , equalLoads (System.loads expected) (System.loads actual)
+  [ equalNodes (S.nodes expected) (S.nodes actual)
+  , equalLoads (S.loads expected) (S.loads actual)
   ]
   
 spec :: Spec
 spec = do
   describe "YamlTransformSpec" $ do
     context "transformYamlToSystem" $ do
+      --it "testSystemYaml transformed to testSystem" $ do
+      --  shouldBe 1 1
       it "transformNodes" $ do
-        let actual = sort $ transformNodes testSystemYaml
-        shouldBe (equalNodes (System.nodes testSystem) actual) True
+        let actual = sort $ transformNodes (nodes testSystemYaml)
+        shouldBe (equalNodes (S.nodes testSystem) actual) True
       it "transformLoads" $ do
-        let actual = sort $ transformLoads testSystemYaml
-        shouldBe (equalLoads (System.loads testSystem) actual) True
-      {-
+        let actual = sort $ transformLoads (loads testSystemYaml)
+        shouldBe (equalLoads (S.loads testSystem) actual) True
+      it "transformPointLoads" $ do
+        let nm = nodeMap (S.nodes testSystem)
+        let actual = sort $ transformPointLoads nm (pointloads testSystemYaml)
+        --shouldBe (S.pointLoads testSystem) actual
+        shouldBe (equalPointLoads (S.pointLoads testSystem) actual) True
+
+
+{-
       it "testSystemYaml transformed to testSystem" $ do
         let expected = transformYamlToSystem testSystemYaml
         shouldBe (equalSystem expected testSystem) True
-      -}
+-}
 
 

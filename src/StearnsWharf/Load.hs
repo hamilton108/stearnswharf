@@ -10,11 +10,17 @@ data PointLoad
   = PointLoad 
   { ploadId :: LoadId
   , plVal :: Double
-  , node :: Node
   , plAngle :: Double
   , plFactor :: Double 
+  , node :: Node
   }
   deriving Show
+
+instance Eq PointLoad where
+    (==) l1 l2 = (ploadId l1) == (ploadId l2)
+
+instance Ord PointLoad where
+    compare l1 l2 = compare (ploadId l1) (ploadId l2)
 
 data Load 
   = Load 

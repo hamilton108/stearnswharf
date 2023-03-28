@@ -4,24 +4,19 @@ module StearnsWharf.Transform.YamlTransform where
 
 -- import Control.Monad.State (State,runState,get,put)
 import Control.Monad.IO.Class (liftIO)
+-- import qualified Data.Map as Map
+import qualified Data.Map.Strict as Map
 import GHC.Generics (Generic)
 import Data.Yaml 
   ( FromJSON(..)
   , ParseException
   , decodeFileEither
   )
-{-
-import StearnsWharf.System 
-  ( System(..)
-  , emptySystem
-  ) 
--}
-import qualified StearnsWharf.System as Sys
-import StearnsWharf.Beam (Beam(..))
+import qualified StearnsWharf.System as S
+-- import StearnsWharf.Beam (Beam(..))
 import qualified StearnsWharf.Load as L
--- import StearnsWharf.Load(Load(..), PointLoad(..))
 import qualified StearnsWharf.Node as N 
-import StearnsWharf.WoodProfile(WoodProfile(..))
+--import StearnsWharf.WoodProfile(WoodProfile(..))
 
 data YamlNode = 
   YamlNode
@@ -44,7 +39,7 @@ data YamlPointLoad =
   { pid :: Int
   , pf :: Double
   , v  :: Double
-  , ang :: Int
+  , ang :: Double
   , pnode :: Int
   } deriving (Show,Eq,Generic)
 
@@ -78,6 +73,8 @@ data YamlSystem =
   , woodprofiles :: [YamlWoodProfile]
   } deriving (Show,Eq,Generic)
 
+type NodeMap = Map.Map Int N.Node
+
 instance FromJSON B33 
 instance FromJSON WoodProfileInternal
 instance FromJSON YamlWoodProfile
@@ -90,8 +87,8 @@ transformNode :: YamlNode -> Int -> N.Node
 transformNode yn globalIndex =
   N.Node (nid yn) (x yn) (y yn) ((N.bitSumToDof . dof) yn) globalIndex
 
-transformNodes :: YamlSystem -> [N.Node]
-transformNodes ysys = go (nodes ysys) 0 []
+transformNodes :: [YamlNode] -> [N.Node]
+transformNodes yns = go yns 0 []
   where 
     go :: [YamlNode] -> Int -> [N.Node] -> [N.Node]
     go [] _ acc = acc
@@ -107,9 +104,34 @@ transformLoad :: YamlLoad -> L.Load
 transformLoad yl = 
   L.Load (lid yl) 0.0 (ly1 yl) 0.0 (ly2 yl) (f yl)
 
-transformLoads :: YamlSystem -> [L.Load]
-transformLoads ysys = 
-  map transformLoad (loads ysys)
+
+transformLoads :: [YamlLoad] -> [L.Load]
+transformLoads yls = 
+  map transformLoad yls
+
+ {-   ploadId :: LoadId
+  , plVal :: Double
+  , node :: Node
+  , plAngle :: Double
+  , plFactor :: Double 
+  - { pid: 1, pf: 1.4, v: -55.0, ang: 90, pnode: 2 }
+
+ -}
+ 
+transformPointLoad :: NodeMap -> YamlPointLoad -> L.PointLoad  
+transformPointLoad nm yl = 
+  let 
+    myNode = Map.lookup (pnode yl) nm
+  in 
+  case myNode of 
+    Just hit ->
+      L.PointLoad (pid yl) (v yl) (ang yl) (pf yl) hit 
+    Nothing -> 
+      undefined
+
+transformPointLoads :: NodeMap -> [YamlPointLoad] -> [L.PointLoad]
+transformPointLoads nm ploads = 
+  map (transformPointLoad nm) ploads 
 
 parseYaml' :: FilePath -> IO (Either ParseException YamlSystem)
 parseYaml' fname = 
@@ -127,16 +149,27 @@ demo =
       Right res1 -> 
         putStrLn $ show res1
 
-transformYamlToSystem :: YamlSystem -> Sys.System
+nodeMap :: [N.Node] -> NodeMap -- Map.Map Int N.Node
+nodeMap nodes = 
+  let 
+    tnodes = map (\x -> (N.nodeId x, x)) nodes
+  in
+  Map.fromList tnodes
+
+transformYamlToSystem :: YamlSystem -> S.System
 transformYamlToSystem ymlsystem = 
-  Sys.System
-  { Sys.nodes = transformNodes ymlsystem
-  , Sys.loads = transformLoads ymlsystem
-  , Sys.pointLoads = []
-  , Sys.woodProfiles = []
+  let 
+    n = transformNodes (nodes ymlsystem)
+    nm = nodeMap n
+  in
+  S.System
+  { S.nodes = n
+  , S.loads = transformLoads (loads ymlsystem)
+  , S.pointLoads = transformPointLoads nm (pointloads ymlsystem)
+  , S.woodProfiles = []
   }
 
-parseYaml :: FilePath -> IO (Maybe Sys.System)
+parseYaml :: FilePath -> IO (Maybe S.System)
 parseYaml fname = 
   parseYaml' fname >>= \ymlsystem -> 
     case ymlsystem of 
