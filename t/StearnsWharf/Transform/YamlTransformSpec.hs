@@ -13,10 +13,12 @@ import StearnsWharf.Transform.YamlTransform
 import qualified StearnsWharf.System as S
 import qualified StearnsWharf.Node as N
 import qualified StearnsWharf.Load as L
---import qualified StearnsWharf.WoodProfile as W
+import qualified StearnsWharf.WoodProfile as W
+import qualified StearnsWharf.Beam as B
 import qualified StearnsWharf.Transform.YamlTransform as YT
+import StearnsWharf.Common (Width(..),Height(..))
 
-nodeEq :: (N.Node, N.Node) -> Bool
+{- nodeEq :: (N.Node, N.Node) -> Bool
 nodeEq (n1, n2) = 
   all ((==) True)
   [ N.nodeId n1 == N.nodeId n2
@@ -46,7 +48,8 @@ pointLoadEq (l1, l2) =
   , L.plFactor l1 == L.plFactor l2
   , L.node l1 == L.node l2
   ]
-
+ -}
+ 
 testSystemYaml :: YamlSystem
 testSystemYaml = 
   YamlSystem 
@@ -73,7 +76,7 @@ testSystemYaml =
             , h = 270.0, 
             b33 = 
               [ B33 {bid = 1, ld = 1, n1 = 1, n2 = 2}
-              , B33 {bid = 2, ld = 1, n1 = 2, n2 = 3}
+              , B33 {bid = 2, ld = 2, n1 = 2, n2 = 3}
               ]
             }
           , WoodProfileInternal 
@@ -81,13 +84,81 @@ testSystemYaml =
             , h = 270.0
             , b33 = 
               [ B33 {bid = 3, ld = 1, n1 = 3, n2 = 4}
-              , B33 {bid = 4, ld = 1, n1 = 4, n2 = 5}
+              , B33 {bid = 4, ld = 0, n1 = 4, n2 = 5}
               ]
             }
           ]
         }
       ]
     }
+
+woodProfilesSystem = 
+  [ B.Bjlk33 
+    ( B.BeamProp 
+      { beamId = 1
+      , n1 = N.FirstNode (N.Node {nodeId = 1, nx = 0.0, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0})
+      , n2 = N.SecondNode (N.Node {nodeId = 2, nx = 1.75, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1})
+      , bt = W.WoodProfile 
+              { width = Width 90.0
+              , height = Height 270.0
+              , matr = W.Material W.Glulam (W.MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = W.GL32c})}
+              , limitStates = 
+                Just 
+                  ( L.LimitStates 
+                    { uls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
+                    , sls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -7.142857142857143, qx2 = 0.0, qy2 = -7.142857142857143, loadFactor = 1.0}
+                    }
+                  )
+              }
+    )
+  , B.Bjlk33 
+    ( B.BeamProp 
+      { beamId = 2
+      , n1 = N.FirstNode (N.Node {nodeId = 2, nx = 1.75, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1})
+      , n2 = N.SecondNode (N.Node {nodeId = 3, nx = 3.5, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4})
+      , bt = W.WoodProfile 
+              { width = Width 90.0
+              , height = Height 270.0
+              , matr = W.Material W.Glulam (W.MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = W.GL32c}
+              )}
+      , limitStates = 
+          Just 
+            ( L.LimitStates 
+              { uls = L.Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -23.0, loadFactor = 1.4}
+              , sls = L.Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -16.42857142857143, loadFactor = 1.0}
+              })
+      }
+    )
+  , B.Bjlk33 
+    ( B.BeamProp 
+      { beamId = 3
+      , n1 = N.FirstNode (N.Node {nodeId = 3, nx = 3.5, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4})
+      , n2 = N.SecondNode (N.Node {nodeId = 4, nx = 7.0, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5})
+      , bt = W.WoodProfile 
+              { width = Width 115.0
+              , height = Height 270.0
+              , matr = W.Material W.Glulam (W.MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = W.GL32c})
+              }
+      , limitStates = Just (L.LimitStates 
+          { uls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
+          , sls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -7.142857142857143, qx2 = 0.0, qy2 = -7.142857142857143, loadFactor = 1.0}
+          })
+      }
+    )
+  , B.Bjlk33 
+    ( B.BeamProp 
+      { beamId = 4
+      , n1 = N.FirstNode (N.Node {nodeId = 4, nx = 7.0, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5})
+      , n2 = N.SecondNode (N.Node {nodeId = 5, nx = 10.0, ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 8})
+      , bt = W.WoodProfile 
+              { width = Width 115.0
+              , height = Height 270.0
+              , matr = W.Material W.Glulam (W.MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = W.GL32c})
+              }
+      , limitStates = Nothing
+      }
+    )
+  ]
 
 testSystem :: S.System
 testSystem = 
@@ -118,52 +189,52 @@ testSystem =
               }
           }
       ]
-  , woodProfiles = []
+  , woodProfiles = woodProfilesSystem
   }
 
+{- 
 equalNodes :: [N.Node] -> [N.Node] -> Bool
 equalNodes expected actual = 
-  all ((== ) True) $ map nodeEq $ zip expected actual 
+  all ((==) True) $ map nodeEq $ zip expected actual 
   
 
 equalLoads :: [L.Load] -> [L.Load] -> Bool
 equalLoads expected actual = 
-  all ((== ) True) $ map loadEq $ zip expected actual 
+  all ((==) True) $ map loadEq $ zip expected actual 
 
 equalPointLoads :: [L.PointLoad] -> [L.PointLoad] -> Bool
 equalPointLoads expected actual = 
-  all ((== ) True) $ map pointLoadEq $ zip expected actual 
+  all ((==) True) $ map pointLoadEq $ zip expected actual 
+
+equalWoodProfiles :: [B.Beam a] -> [B.Beam a] -> Bool
+equalWoodProfiles expected actual = 
+  all ((==) True) $ map (\(b1,b2) -> b1 == b2) $ zip expected actual 
 
 equalSystem :: S.System -> S.System -> Bool
 equalSystem expected actual = 
   all (\x -> x == True)
   [ equalNodes (S.nodes expected) (S.nodes actual)
   , equalLoads (S.loads expected) (S.loads actual)
-  ]
+  ] -}
   
 spec :: Spec
 spec = do
   describe "YamlTransformSpec" $ do
     context "transformYamlToSystem" $ do
-      --it "testSystemYaml transformed to testSystem" $ do
-      --  shouldBe 1 1
+      let actualSystem = transformYamlToSystem testSystemYaml
       it "transformNodes" $ do
-        let actual = sort $ transformNodes (nodes testSystemYaml)
-        shouldBe (equalNodes (S.nodes testSystem) actual) True
+        let actual = sort $ S.nodes actualSystem 
+        shouldBe (S.nodes testSystem) actual
       it "transformLoads" $ do
-        let actual = sort $ transformLoads (loads testSystemYaml)
-        shouldBe (equalLoads (S.loads testSystem) actual) True
+        let actual = sort $ S.loads actualSystem 
+        shouldBe (S.loads testSystem) actual
       it "transformPointLoads" $ do
-        let nm = nodeMap (S.nodes testSystem)
-        let actual = sort $ transformPointLoads nm (pointloads testSystemYaml)
-        --shouldBe (S.pointLoads testSystem) actual
-        shouldBe (equalPointLoads (S.pointLoads testSystem) actual) True
+        let actual = sort $ S.pointLoads actualSystem
+        shouldBe (S.pointLoads testSystem) actual
+      it "transformWoodProfiles" $ do
+        let actual = sort $ S.woodProfiles actualSystem
+        shouldBe (S.woodProfiles testSystem) actual
 
 
-{-
-      it "testSystemYaml transformed to testSystem" $ do
-        let expected = transformYamlToSystem testSystemYaml
-        shouldBe (equalSystem expected testSystem) True
--}
 
 

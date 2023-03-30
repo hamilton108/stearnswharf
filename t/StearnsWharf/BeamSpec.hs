@@ -5,15 +5,17 @@ where
 
 import Test.Hspec
 
-import Numeric.LinearAlgebra ((<>),(|>),(#>),Matrix,Vector,fromList,toList) 
--- ,fromLists,disp,dispf,tr)
-import Numeric.LinearAlgebra.Data (flatten)
--- import Data.Vector.Storable (basicLength)
+import Numeric.LinearAlgebra (Vector,fromList,toList) 
 
 import StearnsWharf.Node hiding (calcGeom)
 import StearnsWharf.Load
 import StearnsWharf.Beam
 import StearnsWharf.WoodProfile
+import StearnsWharf.Common 
+  ( Width(..)
+  , Height(..)
+  )
+
 
 diffLists :: [Double] -> [Double] ->[Double]
 diffLists [] _ = []
@@ -64,7 +66,7 @@ no13 =
   , globNdx = 1
   } 
 
-no14 :: Node
+{- no14 :: Node
 no14 = 
   Node 
   { nodeId = 4
@@ -73,6 +75,7 @@ no14 =
   , dof = Dof 0 0 1
   , globNdx = 1
   } 
+ -}
 
 no2 :: Node
 no2 = 
@@ -84,7 +87,7 @@ no2 =
   , globNdx = 1
   } 
 
-no3 :: Node
+{- no3 :: Node
 no3 = 
   Node 
   { nodeId = 6
@@ -92,7 +95,7 @@ no3 =
   , ny = 5.0
   , dof = Dof 0 0 1
   , globNdx = 4
-  } 
+  } -} 
 
 tv1 :: Vector Double
 tv1 = fromList [2.3,3.0,0.0,(-4.0),3.2,0.0]
@@ -113,7 +116,7 @@ load2 :: Load
 load2 = (Load 2 0.0 (-10.0) 0.0 0.0 1.5) 
 
 c24 :: WoodProfile
-c24 = createWoodProfile TEST_CLASS 100 200
+c24 = createWoodProfile TEST_CLASS (Width 100) (Height 200)
 
 beam1 :: Beam WoodProfile
 beam1 = 
@@ -151,6 +154,17 @@ beam3 =
   in
   Bjlk33 bp
 
+beam4 :: Beam WoodProfile
+beam4 = 
+  let 
+    bid = 2 
+    fn = (FirstNode no1)
+    sn = (SecondNode no13)
+    load = Nothing 
+    profile = c24 
+    bp = BeamProp bid fn sn profile load
+  in
+  Bjlk33 bp
 
 sy1 :: Vector Double
 sy1 = fromList [0.0,50.0,-83.33,0.0,50.0,83.33]
@@ -212,14 +226,12 @@ spec = do
         let geom3 = calcGeom beam3
         let syResult3_ = createSY_ geom3 load1
         shouldBe (eqVec syResult3_ sy4) True
+      it "beam2 should not be equal to beam3" $ do
+        shouldBe (beam2 == beam3) False
+      it "beam2 should be equal to beam4" $ do
+        shouldBe beam2 beam4 
       
 
 
-
-{-     context "createK Bjlk32" $ do
-      it "stiffness values" $ do
-        let k32 = flatten $ createK beam4
-         shouldBe k32 expectedBjlk32
--}
 
         

@@ -15,7 +15,7 @@ woodprofiles:
     profiles: 
      - { w: 90, h: 270, 
          b33: [{ bid: 1, ld: 1, n1: 1, n2: 2 },
-               { bid: 2, ld: 1, n1: 2, n2: 3 }] }
+               { bid: 2, ld: 2, n1: 2, n2: 3 }] }
      - { w: 115, h: 270, 
          b33: [{ bid: 3, ld: 1, n1: 3, n2: 4 },
-               { bid: 4, ld: 1, n1: 4, n2: 5 }] }
+               { bid: 4, ld: 0, n1: 4, n2: 5 }] }

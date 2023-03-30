@@ -9,7 +9,7 @@ import Prelude hiding ((<>))
 import Numeric.LinearAlgebra ((<>),(|>),(#>),Matrix,Vector)
 import qualified Numeric.LinearAlgebra as L --fromList,fromLists,disp,dispf,tr)
 -- import Data.Packed.ST (STMatrix,modifyMatrix,STVector,modifyVector)
-import Numeric.LinearAlgebra.Devel (modifyVector,modifyMatrix,STMatrix,STVector,at',atM')
+--import Numeric.LinearAlgebra.Devel (modifyVector,modifyMatrix,STMatrix,STVector,at',atM')
 import Control.Monad.ST (ST)
 
 --import qualified StearnsWharf.Materials as M
@@ -17,7 +17,7 @@ import Control.Monad.ST (ST)
 import qualified StearnsWharf.Load as L
 import qualified StearnsWharf.Node as N
 import qualified StearnsWharf.Profile as P
-import StearnsWharf.Load (Load(..))
+import StearnsWharf.Load (Load(..),LimitStates)
 import StearnsWharf.Node 
   ( Node(..)
   , Geom(..)
@@ -25,10 +25,13 @@ import StearnsWharf.Node
   , SecondNode(..)
   )
 import StearnsWharf.Profile (Profile)
-import StearnsWharf.Common (Cosine(..),Sine(..))
+import StearnsWharf.Common 
+  ( Cosine(..)
+  , Sine(..)
+  )
 
 -- newtype BeamId = BeamId String deriving (Show)
-type BeamId = Int -- BeamId String deriving (Show)
+type BeamId = Int 
 
 data BeamProp a = 
   BeamProp
@@ -36,7 +39,7 @@ data BeamProp a =
   , n1 :: FirstNode
   , n2 :: SecondNode
   , bt :: a
-  , ld :: Maybe Load 
+  , limitStates :: Maybe LimitStates 
   } deriving (Show)
 
 data Beam a 
@@ -44,6 +47,28 @@ data Beam a
   | Bjlk11 (BeamProp a)
   | Bjlk32 (BeamProp a)
   deriving (Show)
+
+instance Eq (BeamProp a) where
+  (==) bp1 bp2 = 
+    ((beamId bp1) == (beamId bp2)) &&
+    ((n1 bp1) == (n1 bp2)) &&
+    ((n2 bp1) == (n2 bp2)) &&
+    ((limitStates bp1) == (limitStates bp2)) 
+
+instance Ord (BeamProp a) where
+  compare bp1 bp2 = compare (beamId bp1) (beamId bp2)
+
+instance Eq (Beam a) where
+  (==) (Bjlk33 b1) (Bjlk33 b2) = b1 == b2
+  (==) (Bjlk11 b1) (Bjlk11 b2) = b1 == b2
+  (==) (Bjlk32 b1) (Bjlk32 b2) = b1 == b2
+  (==) _ _  = False
+
+instance Ord (Beam a) where
+  compare (Bjlk33 b1) (Bjlk33 b2) = compare b1 b2
+  compare (Bjlk11 b1) (Bjlk11 b2) = compare b1 b2 
+  compare (Bjlk32 b1) (Bjlk32 b2) = compare b1 b2 
+  compare _ _ = EQ
 
 {-
 calcEal :: Profile a => a -> Double -> Double

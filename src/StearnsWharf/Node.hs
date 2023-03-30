@@ -24,9 +24,9 @@ type IndexPair = (LocalIndex,GlobalIndex)
 
 -- data NodeType = IsFirstNode | IsSecondNode deriving Eq
 
-newtype FirstNode = FirstNode Node deriving (Show)
+newtype FirstNode = FirstNode Node deriving (Show,Eq)
 
-newtype SecondNode = SecondNode Node deriving (Show)
+newtype SecondNode = SecondNode Node deriving (Show,Eq)
 
 data MatrixCoord = MatrixCoord { row, col :: Index } deriving Show
 
@@ -46,7 +46,12 @@ data Node =
   } deriving (Show)
 
 instance Eq Node where
-    (==) n1 n2 = (nodeId n1) == (nodeId n2)
+    (==) n1 n2 = 
+      (nodeId n1) == (nodeId n2) && 
+      floatEq (nx n1) (nx n2) == True &&
+      floatEq (ny n1) (ny n2) == True &&
+      (dof n1) == (dof n2) &&
+      (globNdx n1) == (globNdx n2)
 
 instance Ord Node where
     compare n1 n2 = compare (nodeId n1) (nodeId n2)
@@ -67,11 +72,10 @@ instance Eq Geom where
         (Sine s1') = s g1
         (Cosine c2') = c g2
         (Sine s2') = s g2
-        cq = floatEq c1' c2'
-        sq = floatEq s1' s2'
-        lq = floatEq (len g1) (len g2)
       in
-      [True,True,True] == [cq,sq,lq]
+      floatEq c1' c2' == True &&
+      floatEq s1' s2' == True &&
+      floatEq (len g1) (len g2) == True
       
 calcGeom :: FirstNode -> SecondNode -> Geom
 calcGeom (FirstNode n1) (SecondNode n2) = 
