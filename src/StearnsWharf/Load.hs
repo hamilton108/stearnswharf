@@ -37,9 +37,9 @@ data Load
   = Load 
   { loadId :: LoadId
   , qx1 :: Double
-  , qy1 :: Double
+  , qz1 :: Double
   , qx2 :: Double
-  , qy2 :: Double
+  , qz2 :: Double
   , loadFactor :: Double 
   }
   deriving Show
@@ -49,9 +49,9 @@ instance Eq Load where
     (==) l1 l2 = 
       (loadId l1) == (loadId l2) &&
       floatEq (qx1 l1) (qx1 l2) &&
-      floatEq (qy1 l1) (qy1 l2) &&
+      floatEq (qz1 l1) (qz1 l2) &&
       floatEq (qx2 l1) (qx2 l2) &&
-      floatEq (qy2 l1) (qy2 l2) &&
+      floatEq (qz2 l1) (qz2 l2) &&
       floatEq (loadFactor l1) (loadFactor l2) 
 
 instance Ord Load where
@@ -71,7 +71,7 @@ instance Eq LimitStates where
 limitStates :: Load -> LimitStates
 limitStates ul@Load{..} = 
   let 
-    sl =  Load loadId  (qx1 / loadFactor) (qy1 / loadFactor) (qx2 / loadFactor) (qy2 / loadFactor) 1.0
+    sl =  Load loadId  (qx1 / loadFactor) (qz1 / loadFactor) (qx2 / loadFactor) (qz2 / loadFactor) 1.0
   in 
   LimitStates ul sl 
   

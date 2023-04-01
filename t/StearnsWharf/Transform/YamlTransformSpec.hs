@@ -10,12 +10,12 @@ import Data.List (sort)
 
 import StearnsWharf.Transform.YamlTransform
 
+--import StearnsWharf.Profile (Profile)
 import qualified StearnsWharf.System as S
 import qualified StearnsWharf.Node as N
 import qualified StearnsWharf.Load as L
 import qualified StearnsWharf.WoodProfile as W
 import qualified StearnsWharf.Beam as B
-import qualified StearnsWharf.Transform.YamlTransform as YT
 import StearnsWharf.Common (Width(..),Height(..))
 
 {- nodeEq :: (N.Node, N.Node) -> Bool
@@ -33,9 +33,9 @@ loadEq (l1, l2) =
   all ((==) True)
   [ L.loadId l1 == L.loadId l2
   , L.qx1 l1 == L.qx1 l2
-  , L.qy1 l1 == L.qy1 l2
+  , L.qz1 l1 == L.qz1 l2
   , L.qx2 l1 == L.qx2 l2
-  , L.qy2 l1 == L.qy2 l2
+  , L.qz2 l1 == L.qz2 l2
   , L.loadFactor l1 == L.loadFactor l2
   ]
 
@@ -92,6 +92,7 @@ testSystemYaml =
       ]
     }
 
+woodProfilesSystem :: [ B.Beam W.WoodProfile ]
 woodProfilesSystem = 
   [ B.Bjlk33 
     ( B.BeamProp 
@@ -105,8 +106,8 @@ woodProfilesSystem =
               , limitStates = 
                 Just 
                   ( L.LimitStates 
-                    { uls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
-                    , sls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -7.142857142857143, qx2 = 0.0, qy2 = -7.142857142857143, loadFactor = 1.0}
+                    { uls = L.Load {loadId = 1, qx1 = 0.0, qz1 = -10.0, qx2 = 0.0, qz2 = -10.0, loadFactor = 1.4}
+                    , sls = L.Load {loadId = 1, qx1 = 0.0, qz1 = -7.142857142857143, qx2 = 0.0, qz2 = -7.142857142857143, loadFactor = 1.0}
                     }
                   )
               }
@@ -124,8 +125,8 @@ woodProfilesSystem =
       , limitStates = 
           Just 
             ( L.LimitStates 
-              { uls = L.Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -23.0, loadFactor = 1.4}
-              , sls = L.Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -16.42857142857143, loadFactor = 1.0}
+              { uls = L.Load {loadId = 2, qx1 = 0.0, qz1 = 0.0, qx2 = 0.0, qz2 = -23.0, loadFactor = 1.4}
+              , sls = L.Load {loadId = 2, qx1 = 0.0, qz1 = 0.0, qx2 = 0.0, qz2 = -16.42857142857143, loadFactor = 1.0}
               })
       }
     )
@@ -140,8 +141,8 @@ woodProfilesSystem =
               , matr = W.Material W.Glulam (W.MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = W.GL32c})
               }
       , limitStates = Just (L.LimitStates 
-          { uls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
-          , sls = L.Load {loadId = 1, qx1 = 0.0, qy1 = -7.142857142857143, qx2 = 0.0, qy2 = -7.142857142857143, loadFactor = 1.0}
+          { uls = L.Load {loadId = 1, qx1 = 0.0, qz1 = -10.0, qx2 = 0.0, qz2 = -10.0, loadFactor = 1.4}
+          , sls = L.Load {loadId = 1, qx1 = 0.0, qz1 = -7.142857142857143, qx2 = 0.0, qz2 = -7.142857142857143, loadFactor = 1.0}
           })
       }
     )
@@ -171,8 +172,8 @@ testSystem =
       , N.Node {nodeId = 5, nx = 10.0,  ny = 0.0, dof = N.Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 8}
       ]
   , loads =
-      [ L.Load {loadId = 1, qx1 = 0.0, qy1 = -10.0, qx2 = 0.0, qy2 = -10.0, loadFactor = 1.4}
-      , L.Load {loadId = 2, qx1 = 0.0, qy1 = 0.0, qx2 = 0.0, qy2 = -23.0, loadFactor = 1.4}
+      [ L.Load {loadId = 1, qx1 = 0.0, qz1 = -10.0, qx2 = 0.0, qz2 = -10.0, loadFactor = 1.4}
+      , L.Load {loadId = 2, qx1 = 0.0, qz1 = 0.0, qx2 = 0.0, qz2 = -23.0, loadFactor = 1.4}
       ] 
   , pointLoads = 
       [ L.PointLoad 

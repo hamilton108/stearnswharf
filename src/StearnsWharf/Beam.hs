@@ -161,8 +161,8 @@ createK_ beam =
 createSY :: Geom -> Load -> Vector Double
 createSY (Geom _ _ len) load = 
   let 
-    q1 = (L.qy1 load)
-    q2 = (L.qy2 load)
+    q1 = (L.qz1 load)
+    q2 = (L.qz2 load)
     f = len/60.0
     s0 = 0.0
     s1 = ((-21.0)*q1 - (9.0*q2)) * f

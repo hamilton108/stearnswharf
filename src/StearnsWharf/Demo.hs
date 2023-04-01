@@ -5,6 +5,17 @@ module StearnsWharf.Demo where
 x :: Int
 x = 3
 
+class Ax a where 
+  ux :: a -> Int
+
+data AxData = AxData Int
+
+instance Ax AxData where 
+  ux (AxData v) = 2 * v
+  
+demo2 :: Functor f => f AxData
+demo2 = Just $ AxData 3
+
 {-
 import GHC.Generics
 import Data.Yaml
