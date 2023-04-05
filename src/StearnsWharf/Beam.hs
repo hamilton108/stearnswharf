@@ -39,7 +39,7 @@ data BeamProp a =
   , n1 :: FirstNode
   , n2 :: SecondNode
   , bt :: a
-  , limitStates :: Maybe LimitStates 
+  , limitStates :: Maybe (LimitStates Load)
   } deriving (Show)
 
 data Beam a 

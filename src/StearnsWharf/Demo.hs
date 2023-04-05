@@ -5,16 +5,60 @@ module StearnsWharf.Demo where
 x :: Int
 x = 3
 
-class Ax a where 
-  ux :: a -> Int
+test :: Num a => a; 
+test = 42
 
-data AxData = AxData Int
+data Load = Load Int deriving (Show)
+data PointLoad = PointLoad Int deriving (Show)
 
-instance Ax AxData where 
-  ux (AxData v) = 2 * v
-  
-demo2 :: Functor f => f AxData
-demo2 = Just $ AxData 3
+instance Eq Load where 
+  (==) (Load l1) (Load l2) = l1 == l2
+
+data Load2 = 
+  Load2 Int
+  | PointLoad2 Int 
+  deriving (Show)
+
+data LimitStates a = 
+  LimitStates 
+  { uls :: a
+  , sls :: a
+  } 
+  deriving (Show)
+   
+class Clonable a where
+  asSls :: a -> Load2
+
+instance Clonable Load2 where 
+  asSls (Load2 v) = Load2 (v * 2)
+  asSls (PointLoad2 v) = PointLoad2 (v * 10)
+    
+instance (Eq a) => Eq (LimitStates a) where
+  (==) ls1 ls2 = 
+    (uls ls1) == (uls ls2) &&
+    (sls ls1) == (sls ls2) 
+
+dax :: LimitStates Load
+dax = LimitStates (Load 3) (Load 45)
+
+dax2 :: LimitStates Load
+dax2 = LimitStates (Load 33) (Load 45)
+
+yax :: Load2 -> LimitStates Load2
+yax u =
+  LimitStates u (asSls u)
+
+data TypeA = TypeA1  | TypeA2 deriving (Show) 
+
+class MyClass a where
+  foo :: Int -> a
+
+instance MyClass TypeA where
+  foo 1 = TypeA1
+  foo _ = TypeA2 
+
+bar :: (MyClass a) => Int -> a
+bar = foo
 
 {-
 import GHC.Generics
