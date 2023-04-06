@@ -16,60 +16,66 @@ import StearnsWharf.WoodProfile
 import StearnsWharf.System
 import StearnsWharf.Common (Height(..),Width(..))
 
-woodProfilesSystem :: [ Beam WoodProfile ]
-woodProfilesSystem = 
-  [ Bjlk33 
-    ( BeamProp 
-      { beamId = 1
-      , n1 = FirstNode (Node {nodeId = 1, nx = 0.0, ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0})
-      , n2 = SecondNode (Node {nodeId = 2, nx = 1.75, ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1})
-      , bt = WoodProfile 
-              { width = Width 90.0
-              , height = Height 270.0
-              , matr = Material Glulam (MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = GL32c})}
-              , limitStates = 
-                Just 
-                  ( LimitStates 
-                    { L.uls = Load {loadId = 1, qx1 = 0.0, qz1 = -10.0, qx2 = 0.0, qz2 = -10.0, loadFactor = 1.4}
-                    , L.sls = Load {loadId = 1, qx1 = 0.0, qz1 = -7.142857142857143, qx2 = 0.0, qz2 = -7.142857142857143, loadFactor = 1.0}
-                    }
-                  )
-              }
-    )
-  , Bjlk33 
-    ( BeamProp 
-      { beamId = 2
-      , n1 = FirstNode (Node {nodeId = 2, nx = 1.75, ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1})
-      , n2 = SecondNode (Node {nodeId = 3, nx = 3.5, ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4})
-      , bt = WoodProfile 
-              { width = Width 90.0
-              , height = Height 270.0
-              , matr = Material Glulam (MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = GL32c}
-              )}
-      , limitStates = 
-          Just 
-            ( LimitStates 
-              { L.uls = Load {loadId = 2, qx1 = 0.0, qz1 = 0.0, qx2 = 0.0, qz2 = -23.0, loadFactor = 1.4}
-              , L.sls = Load {loadId = 2, qx1 = 0.0, qz1 = 0.0, qx2 = 0.0, qz2 = -16.42857142857143, loadFactor = 1.0}
-              })
-      }
-    )
-  , Bjlk33 
-    ( BeamProp 
-      { beamId = 3
-      , n1 = FirstNode (Node {nodeId = 3, nx = 3.5, ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 4})
-      , n2 = SecondNode (Node {nodeId = 4, nx = 7.0, ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 5})
-      , bt = WoodProfile 
-              { width = Width 115.0
-              , height = Height 270.0
-              , matr = Material Glulam (MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = GL32c})
-              }
-      , limitStates = Just (LimitStates 
-          { L.uls = Load {loadId = 1, qx1 = 0.0, qz1 = -10.0, qx2 = 0.0, qz2 = -10.0, loadFactor = 1.4}
-          , L.sls = Load {loadId = 1, qx1 = 0.0, qz1 = -7.142857142857143, qx2 = 0.0, qz2 = -7.142857142857143, loadFactor = 1.0}
-          })
-      }
-    )
+--    , n1 = FirstNode (Node {nodeId = 1, nx = 0.0, ny = 0.0, dof = Dof {dofX = 1, dofY = 0, dofM = 0}, globNdx = 0})
+--    , n2 = SecondNode (Node {nodeId = 2, nx = 1.75, ny = 0.0, dof = Dof {dofX = 1, dofY = 1, dofM = 1}, globNdx = 1})
+
+wp1 :: WoodProfile
+wp1 = WoodProfile 
+  { width = Width 90.0
+  , height = Height 270.0
+  , matr = Material Glulam (MaterialProperties {emodulus = 13500.0, mySigma = 32.0, myTau = 3.5, stClass = GL32c})
+  }
+
+bjlk33 :: Int -> FirstNode -> SecondNode -> WoodProfile -> Maybe (LimitStates Load) -> Beam WoodProfile
+bjlk33 bid fn sn wp lm =
+  Bjlk33 $ BeamProp 
+  { beamId = bid
+  , n1 = fn 
+  , n2 = sn 
+  , bt = wp
+  , limitStates = lm
+  }
+    
+lm1 :: LimitStates Load
+lm1 = LimitStates 
+  { L.uls = Load {loadId = 1, qx1 = 0.0, qz1 = -10.0, qx2 = 0.0, qz2 = -10.0, loadFactor = 1.4}
+  , L.sls = Load {loadId = 1, qx1 = 0.0, qz1 = -7.142857142857143, qx2 = 0.0, qz2 = -7.142857142857143, loadFactor = 1.0}
+  }
+
+lm2 :: LimitStates Load
+lm2 = LimitStates 
+  { L.uls = Load {loadId = 2, qx1 = 0.0, qz1 = 0.0, qx2 = 0.0, qz2 = -23.0, loadFactor = 1.4}
+  , L.sls = Load {loadId = 2, qx1 = 0.0, qz1 = 0.0, qx2 = 0.0, qz2 = -16.42857142857143, loadFactor = 1.0}
+  }
+
+n11 :: Node
+n11 = Node 
+  { nodeId = 1
+  , nx = 0.0 , ny = 0.0
+  , dof = Dof { dofX = 0, dofY = 0, dofM = 1 }
+  , globNdx = 0
+  }
+
+n12 :: Node
+n12 = Node 
+  { nodeId = 2 
+  , nx = 5.0 , ny = 0.0
+  , dof = Dof { dofX = 1, dofY = 1, dofM = 1 }
+  , globNdx = 1
+  }
+
+n13 :: Node
+n13 = Node 
+  { nodeId = 3
+  , nx = 10.0 , ny = 0.0
+  , dof = Dof { dofX = 0, dofY = 0, dofM = 1 }
+  , globNdx = 4
+  }
+
+wpSystem1 :: [ Beam WoodProfile ]
+wpSystem1 = 
+  [ bjlk33 1 (FirstNode n11) (SecondNode n12) wp1 (Just lm1)
+  , bjlk33 2 (FirstNode n12) (SecondNode n13) wp1 (Just lm1)
   ]
 
 testSystem :: System
@@ -92,7 +98,7 @@ testSystem =
               }
           }
       ]
-  , woodProfiles = woodProfilesSystem
+  , woodProfiles = wpSystem1
   }
 
 spec :: Spec
