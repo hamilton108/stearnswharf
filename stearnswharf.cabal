@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3c6413c019b97a277156a8d7573b9b414610718ffe21ded4089dc3584d615e80
+-- hash: bf1b14549312be56ea35ab716288af14db5a32c7cd090b22f9c500089d3485ec
 
 name:           stearnswharf
 version:        2.0.0
@@ -82,6 +82,7 @@ test-suite stearnswharf-test
   main-is: Spec.hs
   other-modules:
       StearnsWharf.BeamSpec
+      StearnsWharf.LoadSpec
       StearnsWharf.NodeSpec
       StearnsWharf.SystemSpec
       StearnsWharf.Transform.YamlTransformSpec

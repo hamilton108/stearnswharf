@@ -1,0 +1,6 @@
+#!/bin/bash
+
+fourmolu --mode inplace  --indentation 2  --import-export-style leading --let-style newline --in-style left-align $1
+
+exit 0
+
