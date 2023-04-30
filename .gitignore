@@ -7,5 +7,6 @@ tmp/
 stack.yaml.lock
 statikk/
 stearnswharf-1.2.2
+*.xlsx#
 
 
