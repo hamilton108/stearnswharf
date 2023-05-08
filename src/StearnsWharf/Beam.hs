@@ -149,7 +149,7 @@ createK (Bjlk32 BeamProp{n1, n2, bt}) =
       , [0.0, k12, k22, 0.0, k24, 0.0] -- 12 17
       , [-eal, 0.0, 0.0, eal, 0.0, 0.0] -- 18 23
       , [0.0, k14, k24, 0.0, k44, 0.0] -- 14 29
-      , [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] --30 35
+      , [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] -- 30 35
       ]
 
 createK_ :: Profile a => Beam a -> Matrix Double
@@ -202,8 +202,10 @@ tg (Cosine c) (Sine s) =
     ]
 
 add2systemK :: Profile a => STMatrix s Double -> Beam a -> ST s ()
-add2systemK m beam = 
-  let 
-    myk = createK_
-  in
-    undefined
+add2systemK m beam =
+  undefined
+
+-- let
+--   myk = createK_
+-- in
+--   undefined

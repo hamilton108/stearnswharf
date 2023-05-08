@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bf1b14549312be56ea35ab716288af14db5a32c7cd090b22f9c500089d3485ec
+-- hash: 37208a4e5dbab2ed818ba53f426ccadbaa3dc5a9e9598ae942fe9e7574f7157c
 
 name:           stearnswharf
 version:        2.0.0
@@ -30,6 +30,10 @@ library
       StearnsWharf.Material
       StearnsWharf.Node
       StearnsWharf.Profile
+      StearnsWharf.Steel.HatProfiles
+      StearnsWharf.Steel.HUP
+      StearnsWharf.Steel.Plates
+      StearnsWharf.Steel.SteelProfiles
       StearnsWharf.System
       StearnsWharf.Transform.YamlTransform
       StearnsWharf.WoodProfile
@@ -84,6 +88,7 @@ test-suite stearnswharf-test
       StearnsWharf.BeamSpec
       StearnsWharf.LoadSpec
       StearnsWharf.NodeSpec
+      StearnsWharf.Steel.HatProfilesSpec
       StearnsWharf.SystemSpec
       StearnsWharf.Transform.YamlTransformSpec
       Paths_stearnswharf
